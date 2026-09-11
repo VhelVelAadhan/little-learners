@@ -39,7 +39,7 @@ export default function HomePage() {
     <div className="app-shell">
       <TopBar muted={muted} toggleMute={toggleMute} onHome={() => setView("home")} onParent={() => setView("parent")} />
       <AnimatePresence mode="wait">
-        {view === "home" && <Landing key="landing" chooseAge={chooseAge} onStart={() => document.getElementById("ages")?.scrollIntoView({ behavior: "smooth" })} notice={ageNotice} />}
+        {view === "home" && <Landing key="landing" chooseAge={chooseAge} onStart={() => chooseAge("2-3")} notice={ageNotice} />}
         {view === "dashboard" && <Dashboard key="dashboard" progress={progress} onColors={() => setView("colors")} />}
         {view === "colors" && <ColorsHub key="colors" progress={progress} onBack={() => setView("dashboard")} openActivity={openActivity} />}
         {view === "parent" && <ParentDashboard key="parent" progress={progress} onBack={() => setView("home")} />}

@@ -8,6 +8,7 @@ export const colors: LearningItem[] = [
   { id: "orange", label: "Orange", value: "#f39a4b" },
   { id: "purple", label: "Purple", value: "#8b6fd6" },
   { id: "pink", label: "Pink", value: "#ef8eb5" },
+  { id: "brown", label: "Brown", value: "#a66f4f" },
 ];
 
 export const category = (

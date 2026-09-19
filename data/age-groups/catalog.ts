@@ -42,7 +42,7 @@ const normalize = (items: LearningItem[]) => items.map((item) => ({ ...item, vis
 export function buildSensoryCatalog(age: AgeGroup, categories: CategoryDefinition[]): ActivityDefinition[] {
   return categories.flatMap(({ id }) => {
     const { label, items } = learningCatalog[id];
-    const safeItems = normalize(items.slice(0, 4));
+    const safeItems = normalize(items.slice(0, id === "colors" ? 8 : 4));
     return [
       { id: `${age}-${id}-sensory-tap`, title: `Touch ${label}`, category: id, ageGroups: [age], type: "explore", difficulty: 1, prompt: "Tap and listen!", items: safeItems, completionThreshold: 3, celebration: false, objective: { skill: "Sensory exploration", description: `Explore ${label.toLowerCase()} through touch and sound.` } },
       { id: `${age}-${id}-sensory-peek`, title: `${label} Peekaboo`, category: id, ageGroups: [age], type: "peekaboo", difficulty: 1, prompt: "Peekaboo!", items: safeItems.slice(0, 3), completionThreshold: 3, celebration: false, objective: { skill: "Cause and effect", description: `Reveal familiar ${label.toLowerCase()}.` } },

@@ -9,6 +9,10 @@ export const colors: LearningItem[] = [
   { id: "purple", label: "Purple", value: "#8b6fd6" },
   { id: "pink", label: "Pink", value: "#ef8eb5" },
   { id: "brown", label: "Brown", value: "#a66f4f" },
+  { id: "black", label: "Black", value: "#343a46" },
+  { id: "gray", label: "Gray", value: "#8793a1" },
+  { id: "teal", label: "Teal", value: "#2fb5a3" },
+  { id: "navy", label: "Navy", value: "#3f5f95" },
 ];
 
 export const category = (

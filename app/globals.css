@@ -131,6 +131,9 @@ button:focus-visible, [role="button"]:focus-visible { outline: 4px solid #3f85d5
 .peekaboo-grid.many .peekaboo-card { width: 100%; height: 100%; min-height: 0; border-width: 5px; border-radius: 24px; }
 .peekaboo-grid.many .peekaboo-card > span { font-size: clamp(38px, 6vh, 58px); }
 .peekaboo-grid.many .peekaboo-card strong { bottom: 8px; padding: 5px 9px; font-size: 13px; }
+.peekaboo-grid.many.twelve { height: min(60vh, 480px); max-height: min(60vh, 480px); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 9px; }
+.peekaboo-grid.many.twelve .peekaboo-card > span { font-size: clamp(32px, 5vh, 48px); }
+.peekaboo-grid.many.twelve .peekaboo-card strong { bottom: 6px; font-size: 11px; }
 .peekaboo-card > span { grid-area: 1/1; font-size: clamp(65px, 12vh, 110px); transition: transform .45s, opacity .35s; }
 .peekaboo-card .peek-face { transform: scale(.6); opacity: 0; }.peekaboo-card.revealed .peek-cover { transform: translateY(-130%); opacity: 0; }.peekaboo-card.revealed .peek-face { transform: scale(1); opacity: 1; }
 .peekaboo-card strong { position: absolute; bottom: 18px; color: #30445a; background: #fffddd; padding: 7px 13px; border-radius: 16px; }
@@ -344,6 +347,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
   .category-count-8 .category-card > strong, .category-count-10 .category-card > strong { font-size: 10px; line-height: 1.05; }
   .peekaboo-grid { gap: 8px; }.peekaboo-card { height: min(44vh, 250px); border-width: 5px; border-radius: 24px; }.peekaboo-card > span { font-size: 60px; }
   .peekaboo-grid.many { width: 100%; height: min(52vh, 300px); max-height: min(52vh, 300px); grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 6px; }.peekaboo-grid.many .peekaboo-card { width: 100%; height: 100%; border-width: 4px; border-radius: 18px; }.peekaboo-grid.many .peekaboo-card > span { font-size: clamp(28px, 8vw, 44px); }.peekaboo-grid.many .peekaboo-card strong { bottom: 5px; padding: 3px 6px; font-size: 10px; }
+  .peekaboo-grid.many.twelve { height: min(57vh, 360px); max-height: min(57vh, 360px); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 5px; }.peekaboo-grid.many.twelve .peekaboo-card > span { font-size: clamp(23px, 7vw, 36px); }.peekaboo-grid.many.twelve .peekaboo-card strong { bottom: 4px; font-size: 9px; }
   .choice-options { gap: 7px; }.choice-options button { width: 29vw; border-width: 5px; border-radius: 22px; }.choice-options button b { font-size: 48px; }.choice-options button strong { font-size: 13px; }
   .sequence-slots span { width: 58px; height: 58px; border-radius: 16px; }
   .sequence-game .choice-options button { width: min(17vw, 66px); border-radius: 16px; }.sequence-game .choice-options button b { font-size: 30px; }

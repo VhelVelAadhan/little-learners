@@ -162,7 +162,7 @@ function Peekaboo({ items, speak, onComplete }: { items: LearningItem[]; speak: 
     const next = [...open, item.id]; setOpen(next); speak(`Peekaboo! ${item.label}`);
     if (next.length === items.length) window.setTimeout(onComplete, 700);
   };
-  return <section className={`peekaboo-grid ${items.length > 4 ? "many" : ""}`}>{items.map((item) => <motion.button key={item.id} className={`peekaboo-card ${open.includes(item.id) ? "revealed" : ""}`} style={{ "--peek-color": item.value } as React.CSSProperties} onClick={() => reveal(item)} whileTap={{ scale: .94 }} aria-label={`Reveal ${item.label}`}><span className="peek-cover">☁️</span><span className="peek-face">{item.visual}</span><strong>{open.includes(item.id) ? item.label : "Tap!"}</strong></motion.button>)}</section>;
+  return <section className={`peekaboo-grid ${items.length > 4 ? "many" : ""} ${items.length > 8 ? "twelve" : ""}`}>{items.map((item) => <motion.button key={item.id} className={`peekaboo-card ${open.includes(item.id) ? "revealed" : ""}`} style={{ "--peek-color": item.value } as React.CSSProperties} onClick={() => reveal(item)} whileTap={{ scale: .94 }} aria-label={`Reveal ${item.label}`}><span className="peek-cover">☁️</span><span className="peek-face">{item.visual}</span><strong>{open.includes(item.id) ? item.label : "Tap!"}</strong></motion.button>)}</section>;
 }
 
 function Choice({ items, speak, onComplete }: { items: LearningItem[]; speak: (text: string) => void; onComplete: () => void }) {

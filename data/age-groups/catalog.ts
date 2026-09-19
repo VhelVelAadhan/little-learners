@@ -3,20 +3,20 @@ import { colors } from "./shared";
 
 type CatalogEntry = { label: string; items: LearningItem[] };
 
-const bank = (label: string, items: Array<[string, string, string, string?]>): CatalogEntry => ({
+const bank = (label: string, items: Array<[string, string, string, string?, string?]>): CatalogEntry => ({
   label,
-  items: items.map(([id, itemLabel, value, visual]) => ({ id, label: itemLabel, value, visual })),
+  items: items.map(([id, itemLabel, value, visual, secondary]) => ({ id, label: itemLabel, value, visual, secondary })),
 });
 
 export const learningCatalog: Record<CategoryId, CatalogEntry> = {
   colors: { label: "Colors", items: colors.map((item) => ({ ...item, visual: "●" })) },
   shapes: bank("Shapes", [["circle", "Circle", "#65b8df", "●"], ["square", "Square", "#ef7478", "■"], ["triangle", "Triangle", "#f0c64e", "▲"], ["star", "Star", "#78b985", "★"]]),
-  animals: bank("Animals", [["dog", "Dog", "#eeb875", "🐶"], ["cat", "Cat", "#86c5e5", "🐱"], ["lion", "Lion", "#efca64", "🦁"], ["frog", "Frog", "#71b982", "🐸"]]),
-  sounds: bank("Sounds", [["bell", "Bell", "#f0ca58", "🔔"], ["drum", "Drum", "#ed8273", "🥁"], ["horn", "Horn", "#74b5df", "📯"], ["rain", "Rain", "#82c6d9", "🌧️"]]),
-  faces: bank("Faces", [["happy", "Happy", "#f2c85b", "😊"], ["silly", "Silly", "#78bce1", "😜"], ["sleepy", "Sleepy", "#9086d8", "😴"], ["love", "Love", "#ef92aa", "🥰"]]),
-  nature: bank("Nature", [["sun", "Sun", "#f2c653", "☀️"], ["flower", "Flower", "#ef8fa8", "🌸"], ["tree", "Tree", "#6fb580", "🌳"], ["cloud", "Cloud", "#80bedf", "☁️"]]),
-  explore: bank("Discovery", [["star", "Star", "#f0c44d", "⭐"], ["balloon", "Balloon", "#ef777b", "🎈"], ["bubble", "Bubble", "#7fc5df", "🫧"], ["heart", "Heart", "#ef93ad", "💗"]]),
-  music: bank("Music", [["drum", "Drum", "#ed8273", "🥁"], ["bell", "Bell", "#f1ca56", "🔔"], ["piano", "Piano", "#8680d5", "🎹"], ["notes", "Song", "#70b886", "🎵"]]),
+  animals: bank("Animals", [["dog", "Dog", "#eeb875", "🐶", "Woof woof!"], ["cat", "Cat", "#86c5e5", "🐱", "Meow!"], ["lion", "Lion", "#efca64", "🦁", "Roar!"], ["frog", "Frog", "#71b982", "🐸", "Ribbit!"], ["cow", "Cow", "#b9c9b4", "🐮", "Moo!"], ["duck", "Duck", "#f1d55b", "🐥", "Quack quack!"], ["elephant", "Elephant", "#8bbbd7", "🐘", "Trumpet!"], ["monkey", "Monkey", "#c99664", "🐵", "Ooh ooh!" ]]),
+  sounds: bank("Sounds", [["bell", "Bell", "#f0ca58", "🔔", "Ding ding!"], ["drum", "Drum", "#ed8273", "🥁", "Boom boom!"], ["horn", "Horn", "#74b5df", "📯", "Toot toot!"], ["rain", "Rain", "#82c6d9", "🌧️", "Pitter patter!"], ["clap", "Clapping", "#ef9c79", "👏", "Clap clap!"], ["clock", "Clock", "#8a82d2", "⏰", "Tick tock!"], ["bird", "Bird", "#71b984", "🐦", "Tweet tweet!"], ["train", "Train", "#6eb5dd", "🚂", "Choo choo!"]]),
+  faces: bank("Faces", [["happy", "Happy", "#f2c85b", "😊"], ["silly", "Silly", "#78bce1", "😜"], ["sleepy", "Sleepy", "#9086d8", "😴"], ["love", "Love", "#ef92aa", "🥰"], ["sad", "Sad", "#71b6df", "😢"], ["surprised", "Surprised", "#ef9a72", "😮"], ["excited", "Excited", "#efc64f", "🤩"], ["calm", "Calm", "#72b989", "😌"]]),
+  nature: bank("Nature", [["sun", "Sun", "#f2c653", "☀️"], ["flower", "Flower", "#ef8fa8", "🌸"], ["tree", "Tree", "#6fb580", "🌳"], ["cloud", "Cloud", "#80bedf", "☁️"], ["moon", "Moon", "#7d82cd", "🌙"], ["butterfly", "Butterfly", "#ef9d72", "🦋"], ["leaf", "Leaf", "#75b886", "🍃"], ["rainbow", "Rainbow", "#72b7df", "🌈"]]),
+  explore: bank("Discovery", [["star", "Star", "#f0c44d", "⭐"], ["balloon", "Balloon", "#ef777b", "🎈"], ["bubble", "Bubble", "#7fc5df", "🫧"], ["heart", "Heart", "#ef93ad", "💗"], ["ball", "Ball", "#73b785", "⚽"], ["blocks", "Blocks", "#ef9b70", "🧱"], ["teddy", "Teddy", "#bd8b62", "🧸"], ["kite", "Kite", "#7c82d1", "🪁"]]),
+  music: bank("Music", [["drum", "Drum", "#ed8273", "🥁", "Boom boom!"], ["bell", "Bell", "#f1ca56", "🔔", "Ding ding!"], ["piano", "Piano", "#8680d5", "🎹", "Plink plonk!"], ["notes", "Song", "#70b886", "🎵", "La la la!"], ["maraca", "Maraca", "#ef9a70", "🪇", "Shake shake!"], ["guitar", "Guitar", "#bc8b63", "🎸", "Strum strum!"], ["xylophone", "Xylophone", "#70b6df", "🎶", "Ting ting!"], ["microphone", "Microphone", "#8b7bd1", "🎤", "Sing along!"]]),
   fruits: bank("Fruits", [["apple", "Apple", "#ed7374", "🍎"], ["banana", "Banana", "#f1cd58", "🍌"], ["orange", "Orange", "#ec9955", "🍊"], ["grapes", "Grapes", "#8b77ce", "🍇"]]),
   vehicles: bank("Vehicles", [["car", "Car", "#ed7374", "🚗"], ["bus", "Bus", "#efc954", "🚌"], ["train", "Train", "#72b983", "🚂"], ["boat", "Boat", "#70b6df", "⛵"]]),
   body: bank("My Body", [["eyes", "Eyes", "#72b8df", "👀"], ["ears", "Ears", "#efa08e", "👂"], ["hands", "Hands", "#f0c45b", "🙌"], ["feet", "Feet", "#75b888", "🦶"]]),
@@ -40,12 +40,14 @@ export const learningCatalog: Record<CategoryId, CatalogEntry> = {
 const normalize = (items: LearningItem[]) => items.map((item) => ({ ...item, visual: item.visual ?? "●" }));
 
 export function buildSensoryCatalog(age: AgeGroup, categories: CategoryDefinition[]): ActivityDefinition[] {
+  const expandedCategories = new Set<CategoryId>(["animals", "sounds", "faces", "nature", "explore"]);
   return categories.flatMap(({ id }) => {
     const { label, items } = learningCatalog[id];
-    const safeItems = normalize(items.slice(0, id === "colors" ? 8 : 4));
+    const safeItems = normalize(items.slice(0, id === "colors" ? 12 : expandedCategories.has(id) ? 8 : 4));
+    const showAllPeekabooItems = id === "colors" || expandedCategories.has(id);
     return [
       { id: `${age}-${id}-sensory-tap`, title: `Touch ${label}`, category: id, ageGroups: [age], type: "explore", difficulty: 1, prompt: "Tap and listen!", items: safeItems, completionThreshold: 3, celebration: false, objective: { skill: "Sensory exploration", description: `Explore ${label.toLowerCase()} through touch and sound.` } },
-      { id: `${age}-${id}-sensory-peek`, title: `${label} Peekaboo`, category: id, ageGroups: [age], type: "peekaboo", difficulty: 1, prompt: "Peekaboo!", items: id === "colors" ? safeItems : safeItems.slice(0, 3), completionThreshold: 3, celebration: false, objective: { skill: "Cause and effect", description: `Reveal familiar ${label.toLowerCase()}.` } },
+      { id: `${age}-${id}-sensory-peek`, title: `${label} Peekaboo`, category: id, ageGroups: [age], type: "peekaboo", difficulty: 1, prompt: "Peekaboo!", items: showAllPeekabooItems ? safeItems : safeItems.slice(0, 3), completionThreshold: 3, celebration: false, objective: { skill: "Cause and effect", description: `Reveal familiar ${label.toLowerCase()}.` } },
     ];
   });
 }

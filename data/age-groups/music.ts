@@ -22,12 +22,18 @@ const musicByAge: Record<AgeGroup, MusicSet> = {
       line("clap", "Clap", "👏", "#f48a79", "Clap, clap, tiny hands. Tap, tap, tiny toes."),
       line("wave", "Wave", "👋", "#72b9df", "Wave hello and smile so bright. Wiggle, giggle, pure delight."),
       line("grow", "Grow", "🌱", "#72ba86", "Up we stretch, down we go. Little learner, grow and grow."),
+      line("bounce", "Bounce", "⚽", "#efc653", "Bounce, bounce, little ball. Up it goes and down it falls."),
+      line("wiggle", "Wiggle", "🪱", "#8d82d5", "Wiggle left and wiggle right. Tiny wiggles feel just right."),
+      line("peek", "Peekaboo", "🙈", "#ef9a78", "Peekaboo, I see you. Smile and wave, hello to you."),
     ],
     songTitle: "Hello, Little Star",
     songItems: [
       line("star", "Little star", "⭐", "#f0c653", "Hello, little star, shining where you are."),
       line("blink", "Blink", "✨", "#8d82d5", "Blink your light and wave hello, softly, softly, to and fro."),
       line("dream", "Sweet dreams", "🌙", "#6e9bce", "Night is calm and dreams are near. Little star is always here."),
+      line("cloud", "Cloud", "☁️", "#78b9df", "Clouds float softly through the sky. Wave to every cloud nearby."),
+      line("hug", "Big hug", "🤗", "#ef9a78", "Open your arms, warm and wide. Share a happy hug inside."),
+      line("goodnight", "Goodnight", "🧸", "#bc8b66", "Goodnight teddy, rest your head. Stars are glowing near your bed."),
     ],
   },
   "1-2": {

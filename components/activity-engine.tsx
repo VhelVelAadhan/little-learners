@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Check, RefreshCw, Volume2 } from "lucide-react";
+import { ArrowLeft, Check, Music2, RefreshCw, Volume2 } from "lucide-react";
 import type { ActivityDefinition, LearningItem } from "@/types/learning";
 import { Celebration } from "@/components/celebration";
 
@@ -48,6 +48,7 @@ export function ActivityEngine({ activity, onBack, onComplete, speak }: Activity
       {(activity.type === "choice" || activity.type === "pattern") && <Choice items={activity.items} speak={speak} onComplete={finish} />}
       {activity.type === "sequence" && <Sequence items={activity.items} speak={speak} onComplete={finish} />}
       {activity.type === "tracing" && <Tracing item={activity.items[0]} speak={speak} onComplete={finish} />}
+      {activity.type === "music" && <MusicActivity items={activity.items} speak={speak} onComplete={finish} />}
       {complete && (activity.celebration === false ? <GentleFinish onContinue={onBack} /> : <Celebration onContinue={onBack} />)}
     </main>
   );
@@ -194,6 +195,19 @@ function Tracing({ item, speak, onComplete }: { item: LearningItem; speak: (text
     if (next === dots.length) window.setTimeout(onComplete, 650);
   };
   return <section className="trace-game"><div className="trace-letter" aria-label={`Trace ${item.label}`}><span>{item.visual}</span>{dots.map((name, index) => <button key={name} className={`trace-dot trace-${name} ${index < step ? "done" : index === step ? "next" : ""}`} onClick={() => trace(index)} aria-label={`Trace point ${index + 1}`}>{index < step ? <Check /> : index + 1}</button>)}</div><p>Follow the glowing dots.</p></section>;
+}
+
+function MusicActivity({ items, speak, onComplete }: { items: LearningItem[]; speak: (text: string) => void; onComplete: () => void }) {
+  const [heard, setHeard] = useState<string[]>([]);
+  const play = (item: LearningItem) => {
+    speak(item.secondary ?? item.label);
+    setHeard((current) => current.includes(item.id) ? current : [...current, item.id]);
+  };
+  const playAll = () => {
+    speak(items.map((item) => item.secondary ?? item.label).join(" "));
+    setHeard(items.map((item) => item.id));
+  };
+  return <section className="music-stage"><div className="music-cards">{items.map((item) => <motion.button key={item.id} className={heard.includes(item.id) ? "heard" : ""} style={{ "--music-color": item.value } as React.CSSProperties} onClick={() => play(item)} whileTap={{ scale: .96 }}><span>{item.visual ?? "🎵"}</span><strong>{item.label}</strong><small>{item.secondary}</small><em><Volume2 /> Listen</em></motion.button>)}</div><div className="music-actions"><button className="sing-all" onClick={playAll}><Music2 /> Play all</button><button className="sunny-button" onClick={onComplete} disabled={heard.length < items.length}>We sang together <span>→</span></button></div></section>;
 }
 
 function GentleFinish({ onContinue }: { onContinue: () => void }) {

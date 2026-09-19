@@ -1,12 +1,13 @@
 import type { AgeGroupDefinition } from "@/types/learning";
 import { category } from "./shared";
 import { buildLearningCatalog } from "./catalog";
+import { buildMusicActivities } from "./music";
 
 const earlyCategories = [
   category("alphabet", "ABC", "letters", "purple"), category("phonics", "Phonics", "sound", "blue"), category("numbers", "Numbers", "numbers", "yellow"),
   category("colors", "Colors", "palette", "coral"), category("shapes", "Shapes", "shapes", "blue"), category("animals", "Animals", "paw", "green"),
   category("puzzles", "Puzzles", "puzzle", "yellow"), category("memory", "Memory", "brain", "purple"), category("patterns", "Patterns", "pattern", "coral"),
-  category("stories", "Stories", "book", "green"),
+  category("stories", "Stories", "book", "green"), category("music", "Music", "music", "coral"),
 ];
 
 export const earlyLearner: AgeGroupDefinition = {
@@ -22,6 +23,7 @@ export const earlyLearner: AgeGroupDefinition = {
     { id: "early-memory-01", title: "Animal Memory", category: "memory", ageGroups: ["3-4"], type: "memory", difficulty: 2, prompt: "Find the matching animals.", objective: { skill: "Working memory", description: "Remember and match animal cards." }, items: [{ id: "lion", label: "Lion", value: "#efbf61", visual: "🦁" }, { id: "frog", label: "Frog", value: "#75bc86", visual: "🐸" }, { id: "fish", label: "Fish", value: "#71b8df", visual: "🐟" }] },
     { id: "early-abc-order-01", title: "ABC Train", category: "alphabet", ageGroups: ["3-4"], type: "sequence", difficulty: 2, prompt: "Put A, B and C in order.", objective: { skill: "Letter sequencing", description: "Order the first three letters of the alphabet." }, items: [{ id: "a", label: "A", value: "#ef777b", visual: "A", secondary: "1" }, { id: "b", label: "B", value: "#70b7df", visual: "B", secondary: "2" }, { id: "c", label: "C", value: "#70b784", visual: "C", secondary: "3" }] },
     { id: "early-number-order-01", title: "Counting Train", category: "numbers", ageGroups: ["3-4"], type: "sequence", difficulty: 2, prompt: "Put 1, 2, 3 and 4 in order.", objective: { skill: "Number ordering", description: "Sequence the numbers one through four." }, items: [{ id: "one", label: "1", value: "#ef777b", visual: "1", secondary: "1" }, { id: "two", label: "2", value: "#efc351", visual: "2", secondary: "2" }, { id: "three", label: "3", value: "#70b784", visual: "3", secondary: "3" }, { id: "four", label: "4", value: "#70b7df", visual: "4", secondary: "4" }] },
-    ...buildLearningCatalog("3-4", earlyCategories, 2),
+    ...buildMusicActivities("3-4"),
+    ...buildLearningCatalog("3-4", earlyCategories.filter((item) => item.id !== "music"), 2),
   ],
 };

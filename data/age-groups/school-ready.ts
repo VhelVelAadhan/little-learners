@@ -1,12 +1,13 @@
 import type { AgeGroupDefinition } from "@/types/learning";
 import { category } from "./shared";
 import { buildLearningCatalog } from "./catalog";
+import { buildMusicActivities } from "./music";
 
 const schoolCategories = [
   category("reading", "Reading", "book", "green"), category("phonics", "Phonics", "sound", "blue"), category("math", "Math", "numbers", "yellow"),
   category("numbers", "Numbers", "numbers", "blue"), category("patterns", "Patterns", "pattern", "coral"), category("logic", "Logic", "brain", "purple"),
   category("prewriting", "Pre-Writing", "pencil", "yellow"), category("stories", "Stories", "book", "green"), category("world", "Our World", "globe", "blue"),
-  category("creativity", "Create", "sparkles", "coral"),
+  category("creativity", "Create", "sparkles", "coral"), category("music", "Music", "music", "purple"),
 ];
 
 export const schoolReady: AgeGroupDefinition = {
@@ -26,6 +27,7 @@ export const schoolReady: AgeGroupDefinition = {
     { id: "school-count-20-01", title: "Count to 20", category: "numbers", ageGroups: ["4-5"], type: "sequence", difficulty: 3, prompt: "Finish the counting path: 16, 17, 18, 19, 20.", objective: { skill: "Counting to 20", description: "Sequence the final five numbers to twenty." }, items: [{ id: "sixteen", label: "16", value: "#ef777b", visual: "16", secondary: "1" }, { id: "seventeen", label: "17", value: "#efc451", visual: "17", secondary: "2" }, { id: "eighteen", label: "18", value: "#70b784", visual: "18", secondary: "3" }, { id: "nineteen", label: "19", value: "#70b7df", visual: "19", secondary: "4" }, { id: "twenty", label: "20", value: "#887bd2", visual: "20", secondary: "5" }] },
     { id: "school-pattern-01", title: "Finish the Pattern", category: "patterns", ageGroups: ["4-5"], type: "pattern", difficulty: 3, prompt: "Star, circle, circle, star, circle, circle… what comes next?", objective: { skill: "Complex patterns", description: "Complete an ABB pattern." }, items: [{ id: "star", label: "Star", value: "#efc451", visual: "★", correct: true }, { id: "circle", label: "Circle", value: "#70b7df", visual: "●" }, { id: "square", label: "Square", value: "#ef777b", visual: "■" }] },
     { id: "school-trace-b-01", title: "Trace Letter B", category: "prewriting", ageGroups: ["4-5"], type: "tracing", difficulty: 3, prompt: "Follow the dots to trace B.", objective: { skill: "Letter formation", description: "Practice the movement used to form B." }, items: [{ id: "b", label: "B", value: "#70b7df", visual: "B" }] },
-    ...buildLearningCatalog("4-5", schoolCategories, 3),
+    ...buildMusicActivities("4-5"),
+    ...buildLearningCatalog("4-5", schoolCategories.filter((item) => item.id !== "music"), 3),
   ],
 };

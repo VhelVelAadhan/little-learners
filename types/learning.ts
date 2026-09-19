@@ -8,7 +8,7 @@ export type CategoryId =
 
 export type ActivityType =
   | "explore" | "find" | "matching" | "sorting" | "memory" | "peekaboo"
-  | "choice" | "sequence" | "pattern" | "tracing";
+  | "choice" | "sequence" | "pattern" | "tracing" | "music";
 
 export type Difficulty = 1 | 2 | 3 | 4;
 export type Skill = string;

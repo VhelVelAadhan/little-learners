@@ -62,7 +62,7 @@ export default function HomePage() {
       {view === "hub" && <ActivityHub key={`hub-${selectedAge}-${selectedCategory ?? "all"}`} config={config} categoryId={selectedCategory} progress={ageProgress} onBack={() => setView("dashboard")} openActivity={openActivity} />}
       {view === "parent" && <ParentDashboard key="parent" progress={progress} onBack={() => setView("home")} />}
     </AnimatePresence>
-    {(view === "dashboard" || view === "hub") && <ChildNav active={view} onHome={() => setView("dashboard")} onExplore={() => openHub(null)} />}
+    {(view === "dashboard" || view === "hub") && <ChildNav active={view === "dashboard" ? "home" : selectedCategory === "music" ? "music" : "explore"} onHome={() => setView("dashboard")} onExplore={() => openHub(null)} onMusic={() => openHub("music")} />}
   </div>;
 }
 
@@ -107,7 +107,7 @@ function ActivityHub({ config, categoryId, progress, onBack, openActivity }: { c
 }
 
 function activityTypeLabel(type: ActivityDefinition["type"]) {
-  const labels: Record<ActivityDefinition["type"], string> = { explore: "explore", find: "find", matching: "match", sorting: "sort", memory: "memory", peekaboo: "peekaboo", choice: "choose", sequence: "put in order", pattern: "pattern", tracing: "trace" };
+  const labels: Record<ActivityDefinition["type"], string> = { explore: "explore", find: "find", matching: "match", sorting: "sort", memory: "memory", peekaboo: "peekaboo", choice: "choose", sequence: "put in order", pattern: "pattern", tracing: "trace", music: "sing & rhyme" };
   return labels[type];
 }
 
@@ -117,8 +117,8 @@ function ParentDashboard({ progress, onBack }: { progress: ProgressRecord[]; onB
   return <motion.main className="parent-dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }}><button className="back-link" onClick={onBack}><ArrowLeft /> Back to learning</button><div className="parent-heading"><div><span>PARENT SPACE</span><h1>Little Learners’ journey</h1><p>A gentle look at what has been explored on this device.</p></div><Settings2 /></div><section className="stat-grid"><div><BarChart3 /><strong>{progress.length}</strong><span>activities explored</span></div><div><Star /><strong>{minutes}</strong><span>minutes of play</span></div><div><Sparkles /><strong>{exploredAges.size}</strong><span>age worlds visited</span></div></section><section className="skills-panel"><div><span className="eyebrow">AGE WORLDS</span><h2>Growing through play</h2></div>{ageGroups.map((item) => { const explored = exploredAges.has(item.id); return <div className="skill-row" key={item.id}><LearningIcon name={item.categories[0].icon} /><span><strong>{item.dashboardName}</strong><small>{item.concept}</small></span><em className={explored ? "explored" : ""}>{explored ? "Explored" : "Ready"}</em></div>; })}</section><p className="privacy-note"><ShieldCheck /> Progress stays on this device. No ads, profiles, or child data collection.</p></motion.main>;
 }
 
-function ChildNav({ active, onHome, onExplore }: { active: View; onHome: () => void; onExplore: () => void }) {
-  return <nav className="child-nav" aria-label="Learning sections"><button className={active === "dashboard" ? "active" : ""} onClick={onHome}><Home />Home</button><button className={active === "hub" ? "active" : ""} onClick={onExplore}><Sparkles />Explore</button><button onClick={onExplore}><Gamepad2 />Games</button><button onClick={onExplore}><BookOpen />Stories</button><button onClick={onExplore}><Music2 />Music</button></nav>;
+function ChildNav({ active, onHome, onExplore, onMusic }: { active: "home" | "explore" | "music"; onHome: () => void; onExplore: () => void; onMusic: () => void }) {
+  return <nav className="child-nav" aria-label="Learning sections"><button className={active === "home" ? "active" : ""} onClick={onHome}><Home />Home</button><button className={active === "explore" ? "active" : ""} onClick={onExplore}><Sparkles />Explore</button><button onClick={onExplore}><Gamepad2 />Games</button><button onClick={onExplore}><BookOpen />Stories</button><button className={active === "music" ? "active" : ""} onClick={onMusic}><Music2 />Music</button></nav>;
 }
 
 function PaletteDots() { return <span className="palette-dots" aria-hidden><i /><i /><i /><i /></span>; }

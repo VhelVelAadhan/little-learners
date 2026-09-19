@@ -17,8 +17,8 @@ const babyCategories = [
 ];
 
 export const baby: AgeGroupDefinition = {
-  id: "0-1", title: "Baby Explorer", dashboardName: "Baby Explorer", concept: "Tiny hands. Big discoveries.",
-  eyebrow: "HELLO, BABY EXPLORER!", welcome: "Touch, listen &", welcomeAccent: "discover!",
+  id: "0-1", title: "Baby Bloomers", dashboardName: "Baby Bloomers", concept: "Tiny hands. Big discoveries.",
+  eyebrow: "HELLO, BABY BLOOMER!", welcome: "Touch, listen &", welcomeAccent: "discover!",
   instruction: "Tap something big and bright.", accent: "#78c8e8", world: "sensory",
   categories: babyCategories,
   activities: [

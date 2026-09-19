@@ -61,7 +61,6 @@ button:focus-visible, [role="button"]:focus-visible { outline: 4px solid #3f85d5
 .age-icon { width: 74px; height: 74px; border-radius: 25px; display: grid; place-items: center; background: var(--age-accent); color: white; font-size: 36px; box-shadow: inset -5px -6px 0 rgba(0,0,0,.09); }
 .age-card > strong { font-size: 34px; margin-top: 13px; line-height: 1; color: color-mix(in srgb, var(--age-accent), #203243 45%); }
 .age-card h3 { margin: 9px 0 3px; font-size: 16px; text-transform: uppercase; }
-.age-card p { margin: 0; color: var(--muted); font-size: 14px; }
 .age-notice { text-align: center; margin: 30px auto 0; color: #846427; background: #fff4d8; padding: 12px 18px; border-radius: 20px; max-width: 480px; font-weight: 800; }
 
 .dashboard, .colors-hub, .parent-dashboard { max-width: 1240px; margin: 0 auto; padding: 46px clamp(22px, 5vw, 70px) 130px; }
@@ -191,7 +190,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; }
 .age-icon { width: clamp(38px, 5.5vh, 50px); height: clamp(38px, 5.5vh, 50px); border-radius: 16px; font-size: 22px; }
 .age-card > strong { font-size: clamp(21px, 3vh, 28px); margin-top: 5px; }
 .age-card h3 { font-size: 12px; margin: 3px 0 0; }
-.age-card p { display: none; }
 .age-notice { position: fixed; z-index: 40; left: 50%; bottom: 18px; transform: translateX(-50%); margin: 0; width: min(480px, 90vw); box-shadow: var(--shadow); }
 
 .dashboard, .colors-hub, .parent-dashboard { height: calc(100dvh - clamp(64px, 9vh, 78px)); overflow: hidden; padding: clamp(14px, 2.4vh, 24px) clamp(20px, 5vw, 65px) clamp(78px, 10vh, 95px); display: flex; flex-direction: column; }

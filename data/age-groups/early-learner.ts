@@ -11,8 +11,8 @@ const earlyCategories = [
 ];
 
 export const earlyLearner: AgeGroupDefinition = {
-  id: "3-4", title: "Early Learner", dashboardName: "Early Learner", concept: "Let’s think, play & learn!",
-  eyebrow: "HELLO, EARLY LEARNER!", welcome: "Let’s think, play &", welcomeAccent: "learn!",
+  id: "3-4", title: "Happy Learners", dashboardName: "Happy Learners", concept: "Let’s think, play & learn!",
+  eyebrow: "HELLO, HAPPY LEARNER!", welcome: "Let’s think, play &", welcomeAccent: "learn!",
   instruction: "Pick a challenge for your clever mind.", accent: "#7e77d8", world: "thinking",
   categories: earlyCategories,
   activities: [

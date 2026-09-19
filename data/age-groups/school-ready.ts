@@ -11,8 +11,8 @@ const schoolCategories = [
 ];
 
 export const schoolReady: AgeGroupDefinition = {
-  id: "4-5", title: "School Ready", dashboardName: "School Ready", concept: "Big ideas. Ready to learn.",
-  eyebrow: "HELLO, SUPER LEARNER!", welcome: "Ready for a big", welcomeAccent: "adventure?",
+  id: "4-5", title: "Ready to Shine", dashboardName: "Ready to Shine", concept: "Big ideas. Ready to learn.",
+  eyebrow: "HELLO, SHINING LEARNER!", welcome: "Ready for a big", welcomeAccent: "adventure?",
   instruction: "Choose a mission and show what you know.", accent: "#58aa78", world: "adventure",
   categories: schoolCategories,
   activities: [

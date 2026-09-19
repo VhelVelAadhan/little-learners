@@ -6,8 +6,8 @@ import { buildMusicActivities } from "./music";
 const explorerCategories = [category("colors", "Colors", "palette", "coral"), category("shapes", "Shapes", "shapes", "blue"), category("animals", "Animals", "paw", "green"), category("numbers", "Numbers", "numbers", "yellow"), category("alphabet", "ABC", "letters", "purple"), category("music", "Music", "music", "coral")];
 
 export const explorer: AgeGroupDefinition = {
-  id: "2-3", title: "Little Explorer", dashboardName: "Little Explorer", concept: "Play, learn and grow.",
-  eyebrow: "HELLO, LITTLE EXPLORER!", welcome: "What shall we", welcomeAccent: "discover today?",
+  id: "2-3", title: "Little Adventurers", dashboardName: "Little Adventurers", concept: "Play, learn and grow.",
+  eyebrow: "HELLO, LITTLE ADVENTURER!", welcome: "What shall we", welcomeAccent: "discover today?",
   instruction: "Pick something fun and let’s play.", accent: "#f46f72", world: "learning",
   categories: explorerCategories,
   activities: [

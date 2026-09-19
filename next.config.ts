@@ -8,6 +8,7 @@ const isProjectPage =
 const basePath = isProjectPage ? `/${repositoryName}` : "";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["127.0.0.1"],
   // Emit a self-contained static site in /out. During GitHub Actions builds,
   // project pages are automatically served from the repository subpath.
   output: "export",

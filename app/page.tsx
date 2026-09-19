@@ -80,7 +80,7 @@ function ParentGate({ onOpen }: { onOpen: () => void }) {
 function Landing({ chooseAge, onStart, onInteraction }: { chooseAge: (age: AgeGroup) => void; onStart: () => void; onInteraction: (text: string) => void }) {
   return <motion.main className="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
     <Hero onStart={onStart} onInteraction={onInteraction} />
-    <section className="age-section" id="ages"><div className="section-heading"><span>Pick a path</span><h2>Choose your age</h2><p>Every little learner grows in their own wonderful way.</p></div><div className="age-grid">{ageGroups.map((age, index) => <motion.button key={age.id} className={`age-card ${age.id === "2-3" ? "featured" : ""}`} style={{ "--age-accent": age.accent } as React.CSSProperties} whileHover={{ y: -7 }} whileTap={{ scale: .97 }} onClick={() => chooseAge(age.id)}><span className="age-icon">{["●", "▲", "★", "◆", "✦"][index]}</span><strong>{age.id}</strong><h3>{age.title}</h3><p>{age.concept}</p></motion.button>)}</div></section>
+    <section className="age-section" id="ages"><div className="section-heading"><span>Pick a path</span><h2>Choose your age</h2><p>Every little learner grows in their own wonderful way.</p></div><div className="age-grid">{ageGroups.map((age, index) => <motion.button key={age.id} className="age-card" style={{ "--age-accent": age.accent } as React.CSSProperties} whileHover={{ y: -7 }} whileTap={{ scale: .97 }} onClick={() => chooseAge(age.id)}><span className="age-icon">{["●", "▲", "★", "◆", "✦"][index]}</span><strong>{age.id}</strong><h3>{age.title}</h3><p>{age.concept}</p></motion.button>)}</div></section>
   </motion.main>;
 }
 

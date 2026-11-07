@@ -2,12 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Check, Music2, RefreshCw, Volume2 } from "lucide-react";
-import type { ActivityDefinition, LearningItem } from "@/types/learning";
+import { ArrowLeft, Music2, RefreshCw, Volume2 } from "lucide-react";
+import type { ActivityDefinition, LearningItem, QuizQuestion } from "@/types/learning";
 import { Celebration } from "@/components/celebration";
+import { TracePad } from "@/components/trace-pad";
 
 interface ActivityEngineProps {
   activity: ActivityDefinition;
+  subjectLabel: string;
   onBack: () => void;
   onComplete: (attempts: number) => void;
   speak: (text: string) => void;
@@ -15,17 +17,24 @@ interface ActivityEngineProps {
 
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
 
-export function ActivityEngine({ activity, onBack, onComplete, speak }: ActivityEngineProps) {
+const FINISH_LABELS: Partial<Record<ActivityDefinition["type"], string>> = {
+  music: "We sang together",
+  story: "I heard the story",
+  steps: "We did it!",
+};
+
+export function ActivityEngine({ activity, subjectLabel, onBack, onComplete, speak }: ActivityEngineProps) {
   const [complete, setComplete] = useState(false);
   const [attempts, setAttempts] = useState(1);
 
   const finish = () => {
     setComplete(true);
-    speak(activity.celebration === false ? "Lovely!" : "Wonderful! Great job!");
+    speak("Wonderful! Great job!");
     onComplete(attempts);
   };
 
   useEffect(() => {
+    if (activity.type === "quiz") return;
     const phrase = activity.prompt;
     const timer = window.setTimeout(() => speak(phrase), 500);
     return () => window.clearTimeout(timer);
@@ -35,7 +44,7 @@ export function ActivityEngine({ activity, onBack, onComplete, speak }: Activity
     <main className="activity-shell">
       <header className="activity-header">
         <button className="round-button" onClick={onBack} aria-label="Go back"><ArrowLeft /></button>
-        <div className="activity-title-wrap"><span className="eyebrow">{activity.category.replace("prewriting", "PRE-WRITING").toUpperCase()} PLAY</span><h1>{activity.title}</h1></div>
+        <div className="activity-title-wrap"><span className="eyebrow">{subjectLabel.toUpperCase()}</span><h1>{activity.title}</h1></div>
         <button className="round-button" onClick={() => speak(activity.prompt)} aria-label="Hear instruction"><Volume2 /></button>
       </header>
       <div className="instruction-pill"><Volume2 size={22} aria-hidden /><span>{activity.prompt}</span></div>
@@ -45,11 +54,11 @@ export function ActivityEngine({ activity, onBack, onComplete, speak }: Activity
       {activity.type === "sorting" && <Sorting items={activity.items} speak={speak} onComplete={finish} onAttempt={() => setAttempts((v) => v + 1)} />}
       {activity.type === "memory" && <Memory items={activity.items} speak={speak} onComplete={finish} />}
       {activity.type === "peekaboo" && <Peekaboo items={activity.items} speak={speak} onComplete={finish} />}
-      {(activity.type === "choice" || activity.type === "pattern") && <Choice items={activity.items} speak={speak} onComplete={finish} />}
+      {activity.type === "quiz" && <Quiz questions={activity.questions ?? []} speak={speak} onComplete={finish} onAttempt={() => setAttempts((v) => v + 1)} />}
       {activity.type === "sequence" && <Sequence items={activity.items} speak={speak} onComplete={finish} />}
-      {activity.type === "tracing" && <Tracing item={activity.items[0]} speak={speak} onComplete={finish} />}
-      {activity.type === "music" && <MusicActivity items={activity.items} speak={speak} onComplete={finish} />}
-      {complete && (activity.celebration === false ? <GentleFinish onContinue={onBack} /> : <Celebration onContinue={onBack} />)}
+      {activity.type === "tracing" && <TracePad item={activity.items[0]} speak={speak} onComplete={finish} />}
+      {(activity.type === "music" || activity.type === "story" || activity.type === "steps") && <ReadAlong items={activity.items} finishLabel={FINISH_LABELS[activity.type] ?? "Done"} speak={speak} onComplete={finish} />}
+      {complete && <Celebration onContinue={onBack} />}
     </main>
   );
 }
@@ -61,10 +70,10 @@ function Explore({ items, speak, onComplete, threshold }: { items: LearningItem[
     setSeen((current) => current.includes(item.id) ? current : [...current, item.id]);
   };
   return (
-    <section className="color-grid" aria-label="Explore colors">
+    <section className={`color-grid ${items.length > 12 ? "dense" : ""}`} aria-label="Learning cards">
       {items.map((item) => (
         <motion.button key={item.id} className={`color-orb ${item.visual ? "visual-orb" : ""}`} style={{ "--orb-color": item.value } as React.CSSProperties} onClick={() => tap(item)} whileTap={{ scale: 0.9 }} animate={seen.at(-1) === item.id ? { y: [0, -12, 0], rotate: [0, -3, 3, 0] } : {}}>
-          <span className="orb-shine" />{item.visual && <b>{item.visual}</b>}<strong>{item.label}</strong>
+          <span className="orb-shine" />{item.visual && <b className={[...item.visual].length > 2 ? "long" : ""}>{item.visual}</b>}<strong>{item.label}</strong>
         </motion.button>
       ))}
       <button className="sunny-button wide-action" onClick={onComplete} disabled={seen.length < Math.min(threshold ?? 4, items.length)}>I explored {seen.length} {seen.length === 1 ? "thing" : "things"} <span>→</span></button>
@@ -101,8 +110,9 @@ function Matching({ items, speak, onComplete }: { items: LearningItem[]; speak: 
   const [selected, setSelected] = useState<LearningItem | null>(null);
   const [matched, setMatched] = useState<string[]>([]);
   const targets = useMemo(() => shuffle(items), [items]);
+  const pick = (item: LearningItem) => { setSelected(item); speak(item.label); };
   const match = (item: LearningItem) => {
-    if (!selected) { setSelected(item); speak(item.label); return; }
+    if (!selected) { speak("Tap a word first."); return; }
     if (selected.id === item.id) {
       const next = [...matched, item.id]; setMatched(next); setSelected(null); speak("A perfect match!");
       if (next.length === items.length) window.setTimeout(onComplete, 500);
@@ -110,27 +120,30 @@ function Matching({ items, speak, onComplete }: { items: LearningItem[]; speak: 
   };
   return (
     <section className="match-board">
-      <div className="match-column">{items.map((item) => <button key={item.id} disabled={matched.includes(item.id)} className={`match-tile ${selected?.id === item.id ? "selected" : ""}`} onClick={() => match(item)}><span style={{ background: item.value }}>{item.visual}</span>{item.label}</button>)}</div>
+      <div className="match-column">{items.map((item) => <button key={item.id} disabled={matched.includes(item.id)} className={`match-tile ${selected?.id === item.id ? "selected" : ""}`} onClick={() => pick(item)}>{item.label}</button>)}</div>
       <div className="match-lines">{items.map((_, i) => <span key={i}>•••</span>)}</div>
-      <div className="match-column">{targets.map((item) => <button key={item.id} disabled={matched.includes(item.id)} className="match-target" onClick={() => match(item)} aria-label={`Match ${item.label}`}><span style={{ background: item.value }}>{item.visual}</span></button>)}</div>
+      <div className="match-column">{targets.map((item) => <button key={item.id} disabled={matched.includes(item.id)} className="match-target" onClick={() => match(item)} aria-label={item.visual}><span style={{ background: item.value }}>{item.visual}</span></button>)}</div>
     </section>
   );
 }
 
+const BASKET_COLORS = ["#4f9fdc", "#ef6f72", "#55ad72"];
+
 function Sorting({ items, speak, onComplete, onAttempt }: { items: LearningItem[]; speak: (text: string) => void; onComplete: () => void; onAttempt: () => void }) {
   const [selected, setSelected] = useState<LearningItem | null>(null);
   const [sorted, setSorted] = useState<string[]>([]);
-  const drop = (basket: LearningItem) => {
-    if (!selected) { speak("Choose a color first"); return; }
-    if (selected.id === basket.id) {
+  const baskets = useMemo(() => [...new Set(items.map((item) => item.group ?? ""))], [items]);
+  const drop = (basket: string) => {
+    if (!selected) { speak("Choose a card first."); return; }
+    if (selected.group === basket) {
       const next = [...sorted, selected.id]; setSorted(next); setSelected(null); speak("In it goes!");
       if (next.length === items.length) window.setTimeout(onComplete, 500);
-    } else { setSelected(null); onAttempt(); speak("Almost! Find the same color basket."); }
+    } else { setSelected(null); onAttempt(); speak("Almost! Try another basket."); }
   };
   return (
     <section className="sort-board">
-      <div className="sort-items">{items.filter((item) => !sorted.includes(item.id)).map((item) => <motion.button key={item.id} className={`sort-dot ${selected?.id === item.id ? "selected" : ""}`} style={{ background: item.value }} onClick={() => { setSelected(item); speak(`${item.label}. Find its basket.`); }} whileTap={{ scale: .9 }}><span>{item.label}</span></motion.button>)}</div>
-      <div className="baskets">{items.map((item) => <button key={item.id} className="basket" style={{ "--basket": item.value } as React.CSSProperties} onClick={() => drop(item)}><span className="basket-handle" /><strong>{item.label}</strong></button>)}</div>
+      <div className="sort-items">{items.filter((item) => !sorted.includes(item.id)).map((item) => <motion.button key={item.id} className={`sort-dot ${selected?.id === item.id ? "selected" : ""}`} style={{ background: item.value }} onClick={() => { setSelected(item); speak(`${item.label}. Find its basket.`); }} whileTap={{ scale: .9 }}>{item.visual && <b>{item.visual}</b>}<span>{item.label}</span></motion.button>)}</div>
+      <div className="baskets">{baskets.map((basket, index) => <button key={basket} className="basket" style={{ "--basket": BASKET_COLORS[index % BASKET_COLORS.length] } as React.CSSProperties} onClick={() => drop(basket)}><span className="basket-handle" /><strong>{basket}</strong></button>)}</div>
     </section>
   );
 }
@@ -165,13 +178,36 @@ function Peekaboo({ items, speak, onComplete }: { items: LearningItem[]; speak: 
   return <section className={`peekaboo-grid ${items.length > 4 ? "many" : ""} ${items.length > 8 ? "twelve" : ""}`}>{items.map((item) => <motion.button key={item.id} className={`peekaboo-card ${open.includes(item.id) ? "revealed" : ""}`} style={{ "--peek-color": item.value } as React.CSSProperties} onClick={() => reveal(item)} whileTap={{ scale: .94 }} aria-label={`Reveal ${item.label}`}><span className="peek-cover">☁️</span><span className="peek-face">{item.visual}</span><strong>{open.includes(item.id) ? item.label : "Tap!"}</strong></motion.button>)}</section>;
 }
 
-function Choice({ items, speak, onComplete }: { items: LearningItem[]; speak: (text: string) => void; onComplete: () => void }) {
-  const [hint, setHint] = useState("");
-  const choose = (item: LearningItem) => {
-    if (!item.correct) { setHint("Good try — look again!"); speak("Good try. Look again!"); return; }
-    setHint(`Yes! ${item.label}!`); speak(`Yes! ${item.label}!`); window.setTimeout(onComplete, 650);
+function Quiz({ questions, speak, onComplete, onAttempt }: { questions: QuizQuestion[]; speak: (text: string) => void; onComplete: () => void; onAttempt: () => void }) {
+  const [index, setIndex] = useState(0);
+  const [wrong, setWrong] = useState<string[]>([]);
+  const [solved, setSolved] = useState(false);
+  const current = questions[index];
+  const options = useMemo(() => shuffle([current.answer, ...current.wrong]), [current]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => speak(current.question), 500);
+    return () => window.clearTimeout(timer);
+  }, [current, speak]);
+
+  const choose = (option: string) => {
+    if (solved) return;
+    if (option !== current.answer) {
+      setWrong((value) => [...value, option]); onAttempt(); speak("Good try. Look again!"); return;
+    }
+    setSolved(true); speak(`Yes! ${option}!`);
+    window.setTimeout(() => {
+      if (index === questions.length - 1) { onComplete(); return; }
+      setIndex((value) => value + 1); setWrong([]); setSolved(false);
+    }, 1100);
   };
-  return <section className="choice-game"><div className="choice-options">{items.map((item) => <motion.button key={item.id} style={{ "--choice-color": item.value } as React.CSSProperties} onClick={() => choose(item)} whileTap={{ scale: .92 }}><b>{item.visual ?? item.label}</b><strong>{item.label}</strong></motion.button>)}</div><p className="gentle-feedback" aria-live="polite">{hint}</p></section>;
+
+  return <section className="quiz-game">
+    <p className="quiz-progress" aria-live="polite">Question {index + 1} of {questions.length}</p>
+    {current.visual && <div className="quiz-visual" aria-hidden>{current.visual}</div>}
+    <button className="quiz-question" onClick={() => speak(current.question)}>{current.question} <Volume2 size={20} aria-label="Hear question" /></button>
+    <div className="quiz-options">{options.map((option) => <motion.button key={option} className={solved && option === current.answer ? "correct" : wrong.includes(option) ? "wrong" : ""} disabled={wrong.includes(option)} onClick={() => choose(option)} whileTap={{ scale: .96 }}>{option}</motion.button>)}</div>
+  </section>;
 }
 
 function Sequence({ items, speak, onComplete }: { items: LearningItem[]; speak: (text: string) => void; onComplete: () => void }) {
@@ -186,18 +222,7 @@ function Sequence({ items, speak, onComplete }: { items: LearningItem[]; speak: 
   return <section className="sequence-game"><div className="sequence-slots">{ordered.map((_, index) => <span key={index}>{placed[index]?.visual ?? "?"}</span>)}</div><div className="choice-options">{options.map((item) => <motion.button key={item.id} disabled={placed.some((entry) => entry.id === item.id)} style={{ "--choice-color": item.value } as React.CSSProperties} onClick={() => choose(item)} whileTap={{ scale: .92 }}><b>{item.visual}</b></motion.button>)}</div></section>;
 }
 
-function Tracing({ item, speak, onComplete }: { item: LearningItem; speak: (text: string) => void; onComplete: () => void }) {
-  const dots = ["top", "left", "middle", "right"];
-  const [step, setStep] = useState(0);
-  const trace = (index: number) => {
-    if (index !== step) { speak("Follow the next glowing dot."); return; }
-    const next = step + 1; setStep(next); speak(next === dots.length ? `${item.label}!` : String(next));
-    if (next === dots.length) window.setTimeout(onComplete, 650);
-  };
-  return <section className="trace-game"><div className="trace-letter" aria-label={`Trace ${item.label}`}><span>{item.visual}</span>{dots.map((name, index) => <button key={name} className={`trace-dot trace-${name} ${index < step ? "done" : index === step ? "next" : ""}`} onClick={() => trace(index)} aria-label={`Trace point ${index + 1}`}>{index < step ? <Check /> : index + 1}</button>)}</div><p>Follow the glowing dots.</p></section>;
-}
-
-function MusicActivity({ items, speak, onComplete }: { items: LearningItem[]; speak: (text: string) => void; onComplete: () => void }) {
+function ReadAlong({ items, finishLabel, speak, onComplete }: { items: LearningItem[]; finishLabel: string; speak: (text: string) => void; onComplete: () => void }) {
   const [heard, setHeard] = useState<string[]>([]);
   const play = (item: LearningItem) => {
     speak(item.secondary ?? item.label);
@@ -207,9 +232,5 @@ function MusicActivity({ items, speak, onComplete }: { items: LearningItem[]; sp
     speak(items.map((item) => item.secondary ?? item.label).join(" "));
     setHeard(items.map((item) => item.id));
   };
-  return <section className="music-stage"><div className="music-cards">{items.map((item) => <motion.button key={item.id} className={heard.includes(item.id) ? "heard" : ""} style={{ "--music-color": item.value } as React.CSSProperties} onClick={() => play(item)} whileTap={{ scale: .96 }}><span>{item.visual ?? "🎵"}</span><strong>{item.label}</strong><small>{item.secondary}</small><em><Volume2 /> Listen</em></motion.button>)}</div><div className="music-actions"><button className="sing-all" onClick={playAll}><Music2 /> Play all</button><button className="sunny-button" onClick={onComplete} disabled={heard.length < items.length}>We sang together <span>→</span></button></div></section>;
-}
-
-function GentleFinish({ onContinue }: { onContinue: () => void }) {
-  return <div className="gentle-finish"><div><span>⭐</span><h2>Lovely!</h2><p>You discovered something new.</p><button className="sunny-button" onClick={onContinue}>Keep exploring</button></div></div>;
+  return <section className="music-stage"><div className="music-cards">{items.map((item) => <motion.button key={item.id} className={heard.includes(item.id) ? "heard" : ""} style={{ "--music-color": item.value } as React.CSSProperties} onClick={() => play(item)} whileTap={{ scale: .96 }}><span>{item.visual ?? "🎵"}</span><strong>{item.label}</strong><small>{item.secondary}</small><em><Volume2 /> Listen</em></motion.button>)}</div><div className="music-actions"><button className="sing-all" onClick={playAll}><Music2 /> Play all</button><button className="sunny-button" onClick={onComplete} disabled={heard.length < items.length}>{finishLabel} <span>→</span></button></div></section>;
 }

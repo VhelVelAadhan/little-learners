@@ -1,55 +1,51 @@
-export type AgeGroup = "0-1" | "1-2" | "2-3" | "3-4" | "4-5";
+export type ClassLevel = "pre-kg" | "lkg" | "ukg" | "class-1" | "class-2";
 
-export type CategoryId =
-  | "colors" | "shapes" | "animals" | "sounds" | "faces" | "nature" | "explore" | "music"
-  | "fruits" | "vehicles" | "body" | "numbers" | "songs" | "alphabet" | "phonics"
-  | "puzzles" | "memory" | "patterns" | "stories" | "rhymes" | "reading" | "math"
-  | "logic" | "prewriting" | "world" | "creativity";
+export type SubjectId =
+  | "english" | "maths" | "hindi" | "tamil" | "general-awareness" | "evs" | "gk" | "computer"
+  | "rhymes" | "stories" | "rhymes-stories" | "art-craft" | "music" | "physical" | "moral" | "vocabulary";
 
 export type ActivityType =
   | "explore" | "find" | "matching" | "sorting" | "memory" | "peekaboo"
-  | "choice" | "sequence" | "pattern" | "tracing" | "music";
-
-export type Difficulty = 1 | 2 | 3 | 4;
-export type Skill = string;
-
-export interface LearningObjective {
-  skill: Skill;
-  description: string;
-}
+  | "sequence" | "tracing" | "quiz" | "music" | "story" | "steps";
 
 export interface LearningItem {
   id: string;
   label: string;
   value: string;
+  /** Spoken text for flashcards, visible words for read-along cards, position for sequences. */
   secondary?: string;
   visual?: string;
-  correct?: boolean;
+  /** The basket this item belongs in, for sorting activities. */
+  group?: string;
+}
+
+export interface QuizQuestion {
+  question: string;
+  answer: string;
+  wrong: string[];
+  visual?: string;
 }
 
 export interface ActivityDefinition {
   id: string;
   title: string;
-  category: CategoryId;
-  ageGroups: AgeGroup[];
+  subject: SubjectId;
   type: ActivityType;
-  difficulty: Difficulty;
   prompt: string;
   items: LearningItem[];
-  objective?: LearningObjective;
+  questions?: QuizQuestion[];
   completionThreshold?: number;
-  celebration?: boolean;
 }
 
-export interface CategoryDefinition {
-  id: CategoryId;
+export interface SubjectDefinition {
+  id: SubjectId;
   label: string;
   icon: string;
   tone: "coral" | "blue" | "green" | "yellow" | "purple";
 }
 
-export interface AgeGroupDefinition {
-  id: AgeGroup;
+export interface ClassDefinition {
+  id: ClassLevel;
   title: string;
   dashboardName: string;
   concept: string;
@@ -59,19 +55,16 @@ export interface AgeGroupDefinition {
   instruction: string;
   accent: string;
   world: "sensory" | "discovery" | "learning" | "thinking" | "adventure";
-  categories: CategoryDefinition[];
+  subjects: SubjectDefinition[];
   activities: ActivityDefinition[];
 }
 
 export interface ProgressRecord {
   activityId: string;
-  category: CategoryId;
-  ageGroup: AgeGroup;
+  subject: SubjectId;
+  classLevel: ClassLevel;
   completed: boolean;
   attempts: number;
   duration: number;
   completedAt: string;
 }
-
-export type Activity = ActivityDefinition;
-export type Category = CategoryDefinition;

@@ -5,7 +5,7 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const metadata: Metadata = {
   title: "Little Learners | Learn through play",
-  description: "A safe, joyful, voice-first learning playground for children ages 0–5.",
+  description: "A safe, joyful, voice-first learning playground for Pre-KG to 2nd Std, subject by subject.",
   icons: {
     icon: `${basePath}/favicon.svg`,
     shortcut: `${basePath}/favicon.svg`,

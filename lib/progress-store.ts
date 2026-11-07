@@ -1,6 +1,6 @@
 import type { ProgressRecord } from "@/types/learning";
 
-const STORAGE_KEY = "little-learners-progress-v1";
+const STORAGE_KEY = "little-learners-progress-v2";
 
 export const progressStore = {
   read(): ProgressRecord[] {

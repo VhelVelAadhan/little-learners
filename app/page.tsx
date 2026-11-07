@@ -3,35 +3,32 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, BarChart3, BookOpen, Gamepad2, Home, LockKeyhole, Music2, Play, Settings2, ShieldCheck, Sparkles, Star, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, BarChart3, GraduationCap, Home, LayoutGrid, LockKeyhole, Play, Settings2, ShieldCheck, Sparkles, Star, Volume2, VolumeX } from "lucide-react";
 import { Hero } from "@/components/hero/hero";
 import { ActivityEngine } from "@/components/activity-engine";
 import { LearningIcon } from "@/components/learning-icons";
-import { ageGroupConfigs, ageGroups } from "@/data/age-groups";
+import { classConfigs, classes } from "@/data/classes";
 import { useAudio } from "@/hooks/use-audio";
 import { useLearningTools } from "@/hooks/use-webmcp";
 import { progressStore } from "@/lib/progress-store";
-import type { ActivityDefinition, AgeGroup, AgeGroupDefinition, CategoryId, ProgressRecord } from "@/types/learning";
+import type { ActivityDefinition, ClassDefinition, ClassLevel, ProgressRecord, SubjectId } from "@/types/learning";
 
 type View = "home" | "dashboard" | "hub" | "activity" | "parent";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export default function HomePage() {
   const [view, setView] = useState<View>("home");
-  const [selectedAge, setSelectedAge] = useState<AgeGroup>("2-3");
-  const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>("colors");
+  const [selectedClass, setSelectedClass] = useState<ClassLevel>("pre-kg");
+  const [selectedSubject, setSelectedSubject] = useState<SubjectId | null>(null);
   const [activity, setActivity] = useState<ActivityDefinition | null>(null);
   const [progress, setProgress] = useState<ProgressRecord[]>([]);
   const { muted, speak, toggleMute } = useAudio();
   const startedAt = useRef(0);
-  const config = ageGroupConfigs[selectedAge];
-  const ageProgress = progress.filter((item) => item.ageGroup === selectedAge);
+  const config = classConfigs[selectedClass];
+  const classProgress = progress.filter((item) => item.classLevel === selectedClass);
 
-  const openHub = useCallback((category: CategoryId | null = null) => { setSelectedCategory(category); setView("hub"); }, []);
-  const toolNavigate = useCallback((destination: "dashboard" | "colors") => {
-    setSelectedAge("2-3");
-    if (destination === "colors") openHub("colors"); else setView("dashboard");
-  }, [openHub]);
+  const openHub = useCallback((subject: SubjectId | null = null) => { setSelectedSubject(subject); setView("hub"); }, []);
+  const toolNavigate = useCallback((classLevel: ClassLevel) => { setSelectedClass(classLevel); setSelectedSubject(null); setView("dashboard"); }, []);
 
   useLearningTools(progress, toolNavigate);
   useEffect(() => { const timer = window.setTimeout(() => setProgress(progressStore.read()), 0); return () => window.clearTimeout(timer); }, []);
@@ -40,29 +37,24 @@ export default function HomePage() {
   const openActivity = (definition: ActivityDefinition) => { startedAt.current = Date.now(); setActivity(definition); setView("activity"); };
   const completeActivity = (attempts: number) => {
     if (!activity) return;
-    setProgress(progressStore.save({ activityId: activity.id, category: activity.category, ageGroup: selectedAge, completed: true, attempts, duration: Math.max(10, Math.round((Date.now() - startedAt.current) / 1000)), completedAt: new Date().toISOString() }));
+    setProgress(progressStore.save({ activityId: activity.id, subject: activity.subject, classLevel: selectedClass, completed: true, attempts, duration: Math.max(10, Math.round((Date.now() - startedAt.current) / 1000)), completedAt: new Date().toISOString() }));
   };
-  const chooseAge = (age: AgeGroup) => { setSelectedAge(age); setSelectedCategory(age === "2-3" ? "colors" : null); setView("dashboard"); speak(ageGroupConfigs[age].concept); };
-  const openCategory = (category: CategoryId) => {
-    if (!config.activities.some((item) => item.category === category)) { speak("This learning world is growing."); return; }
-    openHub(category);
-  };
-  const continueLearning = () => {
-    if (selectedAge === "2-3") openHub("colors");
-    else if (config.activities[0]) openActivity(config.activities[0]);
-  };
+  const chooseClass = (classLevel: ClassLevel) => { setSelectedClass(classLevel); setSelectedSubject(null); setView("dashboard"); speak(classConfigs[classLevel].title); };
 
-  if (view === "activity" && activity) return <ActivityEngine activity={activity} speak={speak} onBack={() => setView("hub")} onComplete={completeActivity} />;
+  if (view === "activity" && activity) {
+    const subjectLabel = config.subjects.find((item) => item.id === activity.subject)?.label ?? "";
+    return <ActivityEngine activity={activity} subjectLabel={subjectLabel} speak={speak} onBack={() => setView("hub")} onComplete={completeActivity} />;
+  }
 
   return <div className={`app-shell stage-${config.world}`}>
     <TopBar muted={muted} toggleMute={toggleMute} onHome={() => setView("home")} onParent={() => setView("parent")} />
     <AnimatePresence mode="wait">
-      {view === "home" && <Landing key="landing" chooseAge={chooseAge} onStart={() => chooseAge("2-3")} onInteraction={speak} />}
-      {view === "dashboard" && <AgeDashboard key={`dashboard-${selectedAge}`} config={config} progress={ageProgress} onContinue={continueLearning} onCategory={openCategory} />}
-      {view === "hub" && <ActivityHub key={`hub-${selectedAge}-${selectedCategory ?? "all"}`} config={config} categoryId={selectedCategory} progress={ageProgress} onBack={() => setView("dashboard")} openActivity={openActivity} />}
+      {view === "home" && <Landing key="landing" chooseClass={chooseClass} onStart={() => chooseClass(selectedClass)} onInteraction={speak} />}
+      {view === "dashboard" && <ClassDashboard key={`dashboard-${selectedClass}`} config={config} progress={classProgress} onContinue={openActivity} onSubject={openHub} />}
+      {view === "hub" && <ActivityHub key={`hub-${selectedClass}-${selectedSubject ?? "all"}`} config={config} subjectId={selectedSubject} progress={classProgress} onBack={() => setView("dashboard")} openActivity={openActivity} />}
       {view === "parent" && <ParentDashboard key="parent" progress={progress} onBack={() => setView("home")} />}
     </AnimatePresence>
-    {(view === "dashboard" || view === "hub") && <ChildNav active={view === "dashboard" ? "home" : selectedCategory === "music" ? "music" : "explore"} onHome={() => setView("dashboard")} onExplore={() => openHub(null)} onMusic={() => openHub("music")} />}
+    {(view === "dashboard" || view === "hub") && <ChildNav active={view === "dashboard" ? "subjects" : selectedSubject ? "subjects" : "all"} onSubjects={() => setView("dashboard")} onAll={() => openHub(null)} onClasses={() => setView("home")} />}
   </div>;
 }
 
@@ -77,48 +69,47 @@ function ParentGate({ onOpen }: { onOpen: () => void }) {
   return <button className="parent-link" onPointerDown={start} onPointerUp={stop} onPointerLeave={stop}><LockKeyhole size={18} /><span>Parents</span><small>hold</small></button>;
 }
 
-function Landing({ chooseAge, onStart, onInteraction }: { chooseAge: (age: AgeGroup) => void; onStart: () => void; onInteraction: (text: string) => void }) {
+function Landing({ chooseClass, onStart, onInteraction }: { chooseClass: (classLevel: ClassLevel) => void; onStart: () => void; onInteraction: (text: string) => void }) {
   return <motion.main className="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
     <Hero onStart={onStart} onInteraction={onInteraction} />
-    <section className="age-section" id="ages"><div className="section-heading"><span>Pick a path</span><h2>Choose your learning group</h2><p>Every little learner grows in their own wonderful way.</p></div><div className="age-grid">{ageGroups.map((age, index) => <motion.button key={age.id} className="age-card" style={{ "--age-accent": age.accent } as React.CSSProperties} whileHover={{ y: -7 }} whileTap={{ scale: .97 }} onClick={() => chooseAge(age.id)} aria-label={age.title}><span className="age-icon">{["●", "▲", "★", "◆", "✦"][index]}</span><strong>{age.title}</strong></motion.button>)}</div></section>
+    <section className="age-section" id="classes"><div className="section-heading"><span>Pick a path</span><h2>Choose your class</h2><p>Every little learner grows in their own wonderful way.</p></div><div className="age-grid">{classes.map((item, index) => <motion.button key={item.id} className="age-card" style={{ "--age-accent": item.accent } as React.CSSProperties} whileHover={{ y: -7 }} whileTap={{ scale: .97 }} onClick={() => chooseClass(item.id)} aria-label={item.title}><span className="age-icon">{["●", "▲", "★", "◆", "✦"][index]}</span><strong>{item.title}</strong></motion.button>)}</div></section>
   </motion.main>;
 }
 
-function AgeDashboard({ config, progress, onContinue, onCategory }: { config: AgeGroupDefinition; progress: ProgressRecord[]; onContinue: () => void; onCategory: (id: CategoryId) => void }) {
-  const available = new Set(config.activities.map((item) => item.category));
+function ClassDashboard({ config, progress, onContinue, onSubject }: { config: ClassDefinition; progress: ProgressRecord[]; onContinue: (activity: ActivityDefinition) => void; onSubject: (id: SubjectId) => void }) {
+  const done = new Set(progress.map((item) => item.activityId));
+  const next = config.activities.find((item) => !done.has(item.id)) ?? config.activities[0];
+  const nextSubject = config.subjects.find((item) => item.id === next.subject);
   return <motion.main className={`dashboard age-dashboard ${config.world}`} style={{ "--stage-accent": config.accent } as React.CSSProperties} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-    <section className="welcome-panel"><div><span className="eyebrow">{config.eyebrow}</span><h1>{config.welcome}<br /><em>{config.welcomeAccent}</em></h1><p>{config.instruction}</p></div><Image src={`${basePath}/mascot.png`} alt="Bibi the elephant" width={640} height={640} priority /><div className="progress-bubble"><Star fill="currentColor" /><strong>{progress.length}</strong><span>{config.id === "0-1" ? "things" : "activities"}<br />explored</span></div></section>
-    <section className="continue-card" onClick={onContinue} role="button" tabIndex={0} onKeyDown={(event) => (event.key === "Enter" || event.key === " ") && onContinue()}><div className="continue-icon">{config.id === "2-3" ? <PaletteDots /> : <LearningIcon name={config.categories[0].icon} />}</div><div><span>{progress.length ? "KEEP EXPLORING" : "START HERE"}</span><h2>{config.id === "2-3" ? "Colors are everywhere!" : config.activities[0]?.title}</h2><p>{config.id === "2-3" ? "Explore bright and happy colors" : config.concept}</p></div><button aria-label={`Start ${config.activities[0]?.title}`}><Play fill="currentColor" /></button></section>
-    <div className="dashboard-heading"><div><span>{config.world.toUpperCase()} WORLD</span><h2>Pick a learning world</h2></div><p>Tap any glowing card to begin</p></div>
-    <section className={`category-grid category-count-${config.categories.length}`}>{config.categories.map((category) => { const ready = available.has(category.id); const count = config.activities.filter((item) => item.category === category.id).length; return <motion.button key={category.id} className={`category-card ${category.tone} ${ready ? "ready" : "coming"}`} whileHover={ready ? { y: -5 } : undefined} whileTap={ready ? { scale: .97 } : undefined} onClick={() => onCategory(category.id)} aria-label={`${category.label}. ${ready ? `${count} activities` : "Coming soon"}`}><span className="category-icon"><LearningIcon name={category.icon} /></span><strong>{category.label}</strong><small>{ready ? `${count} ${count === 1 ? "activity" : "activities"}` : "Coming soon"}</small>{ready && <span className="card-arrow">→</span>}</motion.button>; })}</section>
+    <section className="welcome-panel"><div><span className="eyebrow">{config.eyebrow}</span><h1>{config.welcome}<br /><em>{config.welcomeAccent}</em></h1><p>{config.instruction}</p></div><Image src={`${basePath}/mascot.png`} alt="Bibi the elephant" width={640} height={640} priority /><div className="progress-bubble"><Star fill="currentColor" /><strong>{progress.length}</strong><span>activities<br />done</span></div></section>
+    <section className="continue-card" onClick={() => onContinue(next)} role="button" tabIndex={0} aria-label={`Start ${next.title}`} onKeyDown={(event) => (event.key === "Enter" || event.key === " ") && onContinue(next)}><div className="continue-icon"><LearningIcon name={nextSubject?.icon ?? "sparkles"} /></div><div><span>{progress.length ? "KEEP LEARNING" : "START HERE"}</span><h2>{next.title}</h2><p>{nextSubject?.label}</p></div><span className="continue-play" aria-hidden><Play fill="currentColor" /></span></section>
+    <div className="dashboard-heading"><div><span>{config.title.toUpperCase()} SUBJECTS</span><h2>Pick a subject</h2></div><p>Tap any card to begin</p></div>
+    <section className={`category-grid category-count-${config.subjects.length}`}>{config.subjects.map((subject) => { const count = config.activities.filter((item) => item.subject === subject.id).length; return <motion.button key={subject.id} className={`category-card ${subject.tone} ready`} whileHover={{ y: -5 }} whileTap={{ scale: .97 }} onClick={() => onSubject(subject.id)} aria-label={`${subject.label}. ${count} activities`}><span className="category-icon"><LearningIcon name={subject.icon} /></span><strong>{subject.label}</strong><small>{count} {count === 1 ? "activity" : "activities"}</small><span className="card-arrow">→</span></motion.button>; })}</section>
   </motion.main>;
 }
 
-function ActivityHub({ config, categoryId, progress, onBack, openActivity }: { config: AgeGroupDefinition; categoryId: CategoryId | null; progress: ProgressRecord[]; onBack: () => void; openActivity: (activity: ActivityDefinition) => void }) {
-  const activities = categoryId ? config.activities.filter((item) => item.category === categoryId) : config.activities;
+function ActivityHub({ config, subjectId, progress, onBack, openActivity }: { config: ClassDefinition; subjectId: SubjectId | null; progress: ProgressRecord[]; onBack: () => void; openActivity: (activity: ActivityDefinition) => void }) {
+  const activities = subjectId ? config.activities.filter((item) => item.subject === subjectId) : config.activities;
   const [page, setPage] = useState(0);
   const pageSize = 5;
   const pageCount = Math.max(1, Math.ceil(activities.length / pageSize));
   const visibleActivities = activities.slice(page * pageSize, (page + 1) * pageSize);
-  const category = config.categories.find((item) => item.id === categoryId);
-  const title = category?.label ?? `${config.dashboardName} activities`;
-  const visuals = ["● ▲ ■", "?", "↔", "1 2 3", "★"];
-  return <motion.main className="colors-hub activity-hub" style={{ "--stage-accent": config.accent } as React.CSSProperties} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}><button className="back-link" onClick={onBack}><ArrowLeft /> Back to explore</button><section className="hub-title"><div className="hub-palette"><LearningIcon name={category?.icon ?? "sparkles"} /></div><div><span className="eyebrow">{config.dashboardName.toUpperCase()} · {activities.length} ACTIVITIES</span><h1>Play with <em>{title.toLowerCase()}!</em></h1><p>{config.instruction}</p></div></section><section className={`activity-list ${activities.length === 1 ? "single" : ""}`}>{visibleActivities.map((item, index) => { const number = page * pageSize + index + 1; const done = progress.some((record) => record.activityId === item.id); return <motion.button key={item.id} className={`activity-card activity-${(index % 5) + 1}`} onClick={() => openActivity(item)} whileHover={{ y: -6 }} whileTap={{ scale: .98 }}><span className="activity-number">{number}</span><span className="activity-visual">{item.items[0]?.visual ?? visuals[index % visuals.length]}</span><span className="activity-copy"><small>{activityTypeLabel(item.type)}</small><strong>{item.title}</strong><em>{item.prompt}</em></span><span className="activity-play">{done ? "✓" : <Play fill="currentColor" />}</span></motion.button>; })}</section>{pageCount > 1 && <nav className="activity-pages" aria-label="Activity pages"><button onClick={() => setPage((value) => Math.max(0, value - 1))} disabled={page === 0}>← Previous</button><span>{page + 1} of {pageCount}</span><button onClick={() => setPage((value) => Math.min(pageCount - 1, value + 1))} disabled={page === pageCount - 1}>Next →</button></nav>}</motion.main>;
+  const subject = config.subjects.find((item) => item.id === subjectId);
+  const title = subject?.label ?? "all subjects";
+  return <motion.main className="colors-hub activity-hub" style={{ "--stage-accent": config.accent } as React.CSSProperties} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}><button className="back-link" onClick={onBack}><ArrowLeft /> Back to subjects</button><section className="hub-title"><div className="hub-palette"><LearningIcon name={subject?.icon ?? "sparkles"} /></div><div><span className="eyebrow">{config.dashboardName.toUpperCase()} · {activities.length} ACTIVITIES</span><h1><em>{title}</em></h1><p>{config.instruction}</p></div></section><section className={`activity-list ${activities.length === 1 ? "single" : ""}`}>{visibleActivities.map((item, index) => { const number = page * pageSize + index + 1; const done = progress.some((record) => record.activityId === item.id); return <motion.button key={item.id} className={`activity-card activity-${(index % 5) + 1}`} onClick={() => openActivity(item)} whileHover={{ y: -6 }} whileTap={{ scale: .98 }}><span className="activity-number">{number}</span><span className="activity-visual">{item.items[0]?.visual ?? item.questions?.[0]?.visual ?? "?"}</span><span className="activity-copy"><small>{activityTypeLabel(item.type)}</small><strong>{item.title}</strong><em>{item.prompt}</em></span><span className="activity-play">{done ? "✓" : <Play fill="currentColor" />}</span></motion.button>; })}</section>{pageCount > 1 && <nav className="activity-pages" aria-label="Activity pages"><button onClick={() => setPage((value) => Math.max(0, value - 1))} disabled={page === 0}>← Previous</button><span>{page + 1} of {pageCount}</span><button onClick={() => setPage((value) => Math.min(pageCount - 1, value + 1))} disabled={page === pageCount - 1}>Next →</button></nav>}</motion.main>;
 }
 
 function activityTypeLabel(type: ActivityDefinition["type"]) {
-  const labels: Record<ActivityDefinition["type"], string> = { explore: "explore", find: "find", matching: "match", sorting: "sort", memory: "memory", peekaboo: "peekaboo", choice: "choose", sequence: "put in order", pattern: "pattern", tracing: "trace", music: "sing & rhyme" };
+  const labels: Record<ActivityDefinition["type"], string> = { explore: "learn", find: "find", matching: "match", sorting: "sort", memory: "memory", peekaboo: "peekaboo", sequence: "put in order", tracing: "trace", quiz: "quiz", music: "sing along", story: "story", steps: "do it" };
   return labels[type];
 }
 
 function ParentDashboard({ progress, onBack }: { progress: ProgressRecord[]; onBack: () => void }) {
   const minutes = Math.max(0, Math.round(progress.reduce((sum, item) => sum + item.duration, 0) / 60));
-  const exploredAges = new Set(progress.map((item) => item.ageGroup));
-  return <motion.main className="parent-dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }}><button className="back-link" onClick={onBack}><ArrowLeft /> Back to learning</button><div className="parent-heading"><div><span>PARENT SPACE</span><h1>Little Learners’ journey</h1><p>A gentle look at what has been explored on this device.</p></div><Settings2 /></div><section className="stat-grid"><div><BarChart3 /><strong>{progress.length}</strong><span>activities explored</span></div><div><Star /><strong>{minutes}</strong><span>minutes of play</span></div><div><Sparkles /><strong>{exploredAges.size}</strong><span>age worlds visited</span></div></section><section className="skills-panel"><div><span className="eyebrow">AGE WORLDS</span><h2>Growing through play</h2></div>{ageGroups.map((item) => { const explored = exploredAges.has(item.id); return <div className="skill-row" key={item.id}><LearningIcon name={item.categories[0].icon} /><span><strong>{item.dashboardName}</strong><small>{item.concept}</small></span><em className={explored ? "explored" : ""}>{explored ? "Explored" : "Ready"}</em></div>; })}</section><p className="privacy-note"><ShieldCheck /> Progress stays on this device. No ads, profiles, or child data collection.</p></motion.main>;
+  const classesVisited = new Set(progress.map((item) => item.classLevel));
+  return <motion.main className="parent-dashboard" initial={{ opacity: 0 }} animate={{ opacity: 1 }}><button className="back-link" onClick={onBack}><ArrowLeft /> Back to learning</button><div className="parent-heading"><div><span>PARENT SPACE</span><h1>Little Learners’ journey</h1><p>A gentle look at what has been explored on this device.</p></div><Settings2 /></div><section className="stat-grid"><div><BarChart3 /><strong>{progress.length}</strong><span>activities done</span></div><div><Star /><strong>{minutes}</strong><span>minutes of learning</span></div><div><Sparkles /><strong>{classesVisited.size}</strong><span>classes visited</span></div></section><section className="skills-panel"><div><span className="eyebrow">CLASSES</span><h2>Growing through play</h2></div>{classes.map((item) => { const done = progress.filter((record) => record.classLevel === item.id).length; return <div className="skill-row" key={item.id}><LearningIcon name={item.subjects[0].icon} /><span><strong>{item.dashboardName}</strong><small>{item.concept}</small></span><em className={done ? "explored" : ""}>{done} of {item.activities.length}</em></div>; })}</section><p className="privacy-note"><ShieldCheck /> Progress stays on this device. No ads, profiles, or child data collection.</p></motion.main>;
 }
 
-function ChildNav({ active, onHome, onExplore, onMusic }: { active: "home" | "explore" | "music"; onHome: () => void; onExplore: () => void; onMusic: () => void }) {
-  return <nav className="child-nav" aria-label="Learning sections"><button className={active === "home" ? "active" : ""} onClick={onHome}><Home />Home</button><button className={active === "explore" ? "active" : ""} onClick={onExplore}><Sparkles />Explore</button><button onClick={onExplore}><Gamepad2 />Games</button><button onClick={onExplore}><BookOpen />Stories</button><button className={active === "music" ? "active" : ""} onClick={onMusic}><Music2 />Music</button></nav>;
+function ChildNav({ active, onSubjects, onAll, onClasses }: { active: "subjects" | "all"; onSubjects: () => void; onAll: () => void; onClasses: () => void }) {
+  return <nav className="child-nav" aria-label="Learning sections"><button className={active === "subjects" ? "active" : ""} onClick={onSubjects}><Home />Subjects</button><button className={active === "all" ? "active" : ""} onClick={onAll}><LayoutGrid />All activities</button><button onClick={onClasses}><GraduationCap />Change class</button></nav>;
 }
-
-function PaletteDots() { return <span className="palette-dots" aria-hidden><i /><i /><i /><i /></span>; }

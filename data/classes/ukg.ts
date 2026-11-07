@@ -1,0 +1,168 @@
+import { defineClass, explore, match, memory, order, q, quiz, rhyme, sort, steps, story, subject, trace } from "./helpers";
+import { ukgVocabulary } from "./ukg-vocabulary";
+
+export const ukg = defineClass({
+  id: "ukg", title: "UKG", dashboardName: "UKG", concept: "Reading words and first sums.",
+  eyebrow: "HELLO, UKG STAR!", welcome: "Ready to", welcomeAccent: "read and count?",
+  instruction: "Pick a subject and start learning.", accent: "#e8686d", world: "learning",
+}, [
+  subject("english", "English", "type", "coral", [
+    explore("Read: -at and -an Words", "Tap a word and read it!", [["Cat", "🐱"], ["Bat", "🦇"], ["Hat", "🎩"], ["Rat", "🐀"], ["Fan", "🌀"], ["Van", "🚐"], ["Man", "👨"], ["Pan", "🍳"]]),
+    explore("Read: -en, -ig and -ot Words", "Tap a word and read it!", [["Hen", "🐔"], ["Pen", "🖊️"], ["Ten", "🔟"], ["Pig", "🐷"], ["Wig", "💇"], ["Dot", "🔵"], ["Pot", "🍲"], ["Hot", "🔥"]]),
+    explore("Sight Words", "Tap a word and say it!", [["the", "📘"], ["is", "📗"], ["a", "📙"], ["and", "📕"], ["to", "📘"], ["in", "📗"], ["it", "📙"], ["we", "📕"]]),
+    match("Read and Match", "Tap a word, then its picture.", [["Hen", "🐔"], ["Bus", "🚌"], ["Sun", "☀️"], ["Fox", "🦊"]]),
+    sort("Vowel or Consonant?", "Tap a letter, then its basket.", { Vowel: [["A", ""], ["E", ""], ["O", ""]], Consonant: [["B", ""], ["M", ""], ["T", ""]] }),
+    quiz("Opposites", "Choose the opposite word.", [
+      q("What is the opposite of big?", "Small", ["Tall", "Fat"]),
+      q("What is the opposite of hot?", "Cold", ["Warm", "Sun"]),
+      q("What is the opposite of up?", "Down", ["Top", "Over"]),
+      q("What is the opposite of day?", "Night", ["Morning", "Sun"]),
+      q("What is the opposite of happy?", "Sad", ["Glad", "Funny"]),
+    ]),
+    quiz("Rhyming Words", "Which word sounds the same at the end?", [
+      q("Which word rhymes with cat?", "Hat", ["Dog", "Sun"], "🐱"),
+      q("Which word rhymes with bee?", "Tree", ["Bus", "Hen"], "🐝"),
+      q("Which word rhymes with star?", "Car", ["Moon", "Fish"], "⭐"),
+      q("Which word rhymes with frog?", "Log", ["Cat", "Pen"], "🐸"),
+    ]),
+    quiz("A or An?", "Choose the right word.", [
+      q("___ apple", "an", ["a"], "🍎"),
+      q("___ ball", "a", ["an"], "⚽"),
+      q("___ elephant", "an", ["a"], "🐘"),
+      q("___ dog", "a", ["an"], "🐶"),
+      q("___ umbrella", "an", ["a"], "☂️"),
+    ]),
+  ]),
+  ukgVocabulary,
+  subject("maths", "Mathematics", "calculator", "blue", [
+    explore("Count by Tens", "Tap a number and say it!", [["Ten", "10"], ["Twenty", "20"], ["Thirty", "30"], ["Forty", "40"], ["Fifty", "50"], ["Sixty", "60"], ["Seventy", "70"], ["Eighty", "80"], ["Ninety", "90"], ["Hundred", "100"]], 6),
+    order("Count by Twos", "Tap the numbers in order.", [["Two", "2"], ["Four", "4"], ["Six", "6"], ["Eight", "8"], ["Ten", "10"], ["Twelve", "12"]]),
+    quiz("Adding Up", "Add and choose.", [
+      q("What is 1 + 2?", "3", ["2", "4"], "🍎 + 🍎🍎"),
+      q("What is 2 + 2?", "4", ["3", "5"], "⭐⭐ + ⭐⭐"),
+      q("What is 3 + 2?", "5", ["4", "6"], "🐥🐥🐥 + 🐥🐥"),
+      q("What is 4 + 3?", "7", ["6", "8"]),
+      q("What is 5 + 5?", "10", ["9", "8"]),
+    ]),
+    quiz("Taking Away", "Take away and choose.", [
+      q("3 apples. Take away 1. How many are left?", "2", ["1", "3"], "🍎🍎🍎"),
+      q("5 stars. Take away 2. How many are left?", "3", ["2", "4"], "⭐⭐⭐⭐⭐"),
+      q("What is 4 - 1?", "3", ["2", "5"]),
+      q("What is 6 - 3?", "3", ["4", "2"]),
+      q("What is 10 - 5?", "5", ["4", "6"]),
+    ]),
+    quiz("What Comes Between?", "Which number fits?", [
+      q("Which number is between 12 and 14?", "13", ["11", "15"]),
+      q("Which number is between 19 and 21?", "20", ["18", "22"]),
+      q("What comes after 29?", "30", ["28", "40"]),
+      q("What comes before 40?", "39", ["41", "30"]),
+      q("Which number is the biggest?", "45", ["25", "38"]),
+    ]),
+    quiz("Shapes and Patterns", "Look carefully and choose.", [
+      q("What shape is a ball?", "Sphere", ["Cube", "Cone"], "⚽"),
+      q("What shape is a door?", "Rectangle", ["Circle", "Triangle"], "🚪"),
+      q("What comes next? 🔴 🔵 🔴 🔵 🔴", "🔵", ["🔴", "🟢"]),
+      q("What comes next? 2, 4, 6, 8", "10", ["9", "12"]),
+    ]),
+    quiz("Time and Days", "Choose the right answer.", [
+      q("How many days are in a week?", "7", ["5", "10"], "📅"),
+      q("Which day comes after Monday?", "Tuesday", ["Sunday", "Friday"]),
+      q("The short hand of a clock shows the...", "Hour", ["Minute", "Day"], "🕒"),
+    ]),
+    trace("Trace the Number 8", "Eight", "8"),
+  ]),
+  subject("hindi", "Hindi", "languages", "yellow", [
+    explore("व्यंजन: क से ङ", "Tap a letter and say it!", [["कबूतर", "क", "क से कबूतर"], ["खरगोश", "ख", "ख से खरगोश"], ["गाय", "ग", "ग से गाय"], ["घर", "घ", "घ से घर"], ["ङ", "ङ", "ङ"]], 5),
+    explore("व्यंजन: च से ञ", "Tap a letter and say it!", [["चम्मच", "च", "च से चम्मच"], ["छाता", "छ", "छ से छाता"], ["जहाज़", "ज", "ज से जहाज़"], ["झंडा", "झ", "झ से झंडा"], ["ञ", "ञ", "ञ"]], 5),
+    explore("व्यंजन: प से म", "Tap a letter and say it!", [["पतंग", "प", "प से पतंग"], ["फूल", "फ", "फ से फूल"], ["बस", "ब", "ब से बस"], ["भालू", "भ", "भ से भालू"], ["मछली", "म", "म से मछली"]], 5),
+    match("चित्र पहचानो", "Tap a word, then its picture.", [["गाय", "🐄"], ["घर", "🏠"], ["मछली", "🐟"], ["बस", "🚌"]]),
+    memory("शब्द जोड़ी", "Find the matching pairs.", [["फूल", "🌸"], ["छाता", "☂️"], ["भालू", "🐻"], ["पतंग", "🪁"]]),
+    explore("गिनती: एक से दस", "Tap and count!", [["एक", "1"], ["दो", "2"], ["तीन", "3"], ["चार", "4"], ["पाँच", "5"], ["छह", "6"], ["सात", "7"], ["आठ", "8"], ["नौ", "9"], ["दस", "10"]], 6),
+    quiz("अक्षर पहचानो", "Listen and choose.", [
+      q("गाय किस अक्षर से शुरू होता है?", "ग", ["क", "घ"], "🐄"),
+      q("बस किस अक्षर से शुरू होता है?", "ब", ["प", "म"], "🚌"),
+      q("फूल किस अक्षर से शुरू होता है?", "फ", ["प", "भ"], "🌸"),
+      q("चार के बाद कौन सी गिनती आती है?", "पाँच", ["तीन", "छह"]),
+    ]),
+    trace("क लिखो", "क", "क"),
+  ]),
+  subject("evs", "Environmental Awareness (EVS)", "leaf", "green", [
+    sort("Living or Non-Living?", "Tap a picture, then its basket.", { Living: [["Dog", "🐶"], ["Tree", "🌳"], ["Child", "🧒"]], "Non-living": [["Chair", "🪑"], ["Ball", "⚽"], ["Stone", "⚫"]] }),
+    explore("Parts of a Plant", "Tap each part!", [["Root", "🌱", "Roots hold the plant and take in water."], ["Stem", "🌿", "The stem holds the plant up."], ["Leaf", "🍃", "Leaves make food for the plant."], ["Flower", "🌺", "Flowers are the pretty part of a plant."], ["Fruit", "🍎", "Fruits grow on plants and have seeds."]], 5),
+    order("How a Plant Grows", "Tap the pictures in order.", [["Seed", "🌰"], ["Sprout", "🌱"], ["Small plant", "🌿"], ["Tree", "🌳"]]),
+    sort("Where Do They Live?", "Tap an animal, then its home.", { Farm: [["Cow", "🐄"], ["Hen", "🐔"]], Forest: [["Tiger", "🐯"], ["Monkey", "🐒"]], Water: [["Fish", "🐟"], ["Whale", "🐳"]] }),
+    explore("The Weather", "Tap and say it!", [["Sunny", "☀️", "It is hot and sunny."], ["Rainy", "🌧️", "It is rainy. Take an umbrella."], ["Windy", "🌬️", "It is windy. Let us fly a kite."], ["Cloudy", "☁️", "It is a cloudy day."]]),
+    quiz("Our Earth", "Choose the right answer.", [
+      q("What do plants need to grow?", "Water and sunlight", ["Toys", "Shoes"], "🌱"),
+      q("Where should we throw waste?", "In the dustbin", ["On the road", "In the river"], "🗑️"),
+      q("Which one gives us shade?", "A tree", ["A cup", "A pencil"], "🌳"),
+      q("What do we breathe?", "Air", ["Milk", "Sand"], "🌬️"),
+      q("Why should we close the tap?", "To save water", ["To make noise", "To break it"], "🚰"),
+    ]),
+  ]),
+  subject("gk", "General Knowledge (GK)", "globe", "purple", [
+    explore("Days of the Week", "Tap and say each day!", [["Sunday", "1"], ["Monday", "2"], ["Tuesday", "3"], ["Wednesday", "4"], ["Thursday", "5"], ["Friday", "6"], ["Saturday", "7"]], 7),
+    explore("Our India", "Tap and learn!", [["Tiger", "🐅", "The tiger is our national animal."], ["Peacock", "🦚", "The peacock is our national bird."], ["Lotus", "🌸", "The lotus is our national flower."], ["Mango", "🥭", "The mango is our national fruit."]]),
+    match("Baby Animals", "Tap a baby name, then its mother.", [["Puppy", "🐕"], ["Kitten", "🐈"], ["Calf", "🐄"], ["Chick", "🐔"]]),
+    quiz("Fun Facts", "Choose the right answer.", [
+      q("Which is the king of the jungle?", "Lion", ["Cat", "Goat"], "🦁"),
+      q("Which colour is NOT in our flag?", "Pink", ["Saffron", "Green"], "🏳️"),
+      q("How many legs does a dog have?", "4", ["2", "6"], "🐶"),
+      q("Which animal is the tallest?", "Giraffe", ["Cow", "Dog"], "🦒"),
+      q("Which festival is the festival of lights?", "Diwali", ["Holi", "Pongal"], "🪔"),
+      q("How many fingers are on one hand?", "5", ["4", "10"], "🖐️"),
+    ]),
+  ]),
+  subject("computer", "Computer Awareness", "monitor", "blue", [
+    explore("Parts of a Computer", "Tap each part!", [["Monitor", "🖥️", "The monitor shows pictures and words."], ["Keyboard", "⌨️", "We type on the keyboard."], ["Mouse", "🖱️", "We click and point with the mouse."], ["Speaker", "🔊", "Speakers give us sound."], ["Printer", "🖨️", "A printer puts our work on paper."], ["CPU", "🧠", "The CPU is the brain of the computer."]], 6),
+    match("Computer Words", "Tap a word, then its picture.", [["Monitor", "🖥️"], ["Mouse", "🖱️"], ["Keyboard", "⌨️"], ["Printer", "🖨️"]]),
+    quiz("Using a Computer", "Choose the right answer.", [
+      q("What do we type on?", "Keyboard", ["Monitor", "Speaker"], "⌨️"),
+      q("What shows us pictures?", "Monitor", ["Mouse", "Keyboard"], "🖥️"),
+      q("What do we click with?", "Mouse", ["Printer", "Speaker"], "🖱️"),
+      q("Before using a computer, our hands should be...", "Clean and dry", ["Wet", "Sticky"], "🧼"),
+    ]),
+  ]),
+  subject("rhymes-stories", "Rhymes & Stories", "book", "coral", [
+    rhyme("Mary Had a Little Lamb", [["Mary's lamb", "🐑", "Mary had a little lamb, its fleece was white as snow."], ["Everywhere", "🚶‍♀️", "And everywhere that Mary went, the lamb was sure to go."]]),
+    rhyme("Rain Is Falling Down", [["Splash", "🌧️", "Rain is falling down. Rain is falling down. Pitter patter, pitter patter, rain is falling down."], ["Shining", "☀️", "Sun is coming out. Sun is coming out. Shining bright, shining bright, sun is coming out."]]),
+    rhyme("Little Miss Muffet", [["Her tuffet", "🥣", "Little Miss Muffet sat on a tuffet, eating her curds and whey."], ["Spider", "🕷️", "Along came a spider, who sat down beside her, and frightened Miss Muffet away."]]),
+    story("The Clever Rabbit and the Lion", [["A cruel lion", "🦁", "A cruel lion wanted one animal to eat every day."], ["A little rabbit", "🐰", "One day, a little rabbit came very late and said: another lion stopped me!"], ["The well", "🕳️", "He took the lion to a deep well. The lion looked down and saw his own reflection."], ["Splash!", "💦", "The lion jumped in to fight it, and the forest was safe. Brains beat strength!"]]),
+    story("The Ant and the Grasshopper", [["Summer", "🦗", "All summer, a grasshopper sang and played."], ["Busy ant", "🐜", "An ant worked hard and saved food every day."], ["Winter", "❄️", "When winter came, the grasshopper had no food."], ["The lesson", "🤝", "The kind ant shared some food. Work first, and then you can play."]]),
+    quiz("Story Questions", "Think about the stories.", [
+      q("What did the lion see in the well?", "His reflection", ["A fish", "A rabbit"], "🦁"),
+      q("Who saved food for winter?", "The ant", ["The grasshopper", "The lion"], "🐜"),
+      q("Who followed Mary everywhere?", "The lamb", ["The spider", "The rabbit"], "🐑"),
+    ]),
+  ]),
+  subject("art-craft", "Art & Craft", "paint", "yellow", [
+    steps("Paper Fan", "Ask a grown-up to help you.", [["Colour", "🖍️", "Colour a sheet of paper with stripes."], ["Fold", "📄", "Fold the paper forward and back, like steps."], ["Pinch", "🤏", "Pinch one end together."], ["Tape", "🌀", "Tape the end. Now open your fan!"]]),
+    steps("Draw a Fish with Shapes", "Take a pencil and paper.", [["Body", "⬭", "Draw a big oval for the body."], ["Tail", "▲", "Draw a triangle at one end for the tail."], ["Eye", "●", "Draw a small circle for the eye."], ["Colour", "🐟", "Add scales and colour your fish!"]]),
+    steps("Clay Fruit Basket", "Ask a grown-up to help you.", [["Roll", "🟠", "Roll clay into small balls."], ["Shape", "🍌", "Shape them into fruits."], ["Basket", "🧺", "Make a small clay basket."], ["Fill", "🍎", "Put your fruits in the basket."]]),
+    quiz("Art Quiz", "Choose the right answer.", [
+      q("Red and blue make which colour?", "Purple", ["Green", "Orange"], "🔴🔵"),
+      q("What do we use to stick paper?", "Glue", ["Eraser", "Ruler"], "📄"),
+      q("What do we paint with?", "A brush", ["A fork", "A shoe"], "🖌️"),
+    ]),
+  ]),
+  subject("music", "Music & Dance", "mic", "green", [
+    explore("Instruments of India", "Tap and learn!", [["Tabla", "🥁", "A tabla is a pair of small drums."], ["Veena", "🎶", "The veena is a string instrument."], ["Flute", "🎵", "The flute is a wind instrument."], ["Mridangam", "🥁", "The mridangam is a drum played on both sides."]]),
+    steps("Sa Re Ga Ma", "Sing each note!", [["Sa", "🎵", "Sa"], ["Re", "🎶", "Re"], ["Ga", "🎵", "Ga"], ["Ma", "🎶", "Ma"], ["Pa", "🎵", "Pa"], ["Dha Ni Sa", "🎶", "Dha, Ni, Sa"]]),
+    steps("Dance Freeze", "Dance with a grown-up!", [["Dance", "💃", "Dance to your favourite song."], ["Freeze", "🧊", "When the music stops, freeze!"], ["Slow", "🐢", "Now dance very slowly."], ["Fast", "⚡", "Now dance fast. Then take a bow."]]),
+    quiz("Music Quiz", "Choose the right answer.", [
+      q("Which of these do we blow?", "Flute", ["Tabla", "Veena"], "🎵"),
+      q("Which of these do we play with our hands?", "Tabla", ["Flute", "Trumpet"], "🥁"),
+      q("What is the first note we sing?", "Sa", ["Ma", "Ni"], "🎶"),
+    ]),
+  ]),
+  subject("physical", "Physical Education", "move", "purple", [
+    steps("Morning Exercise", "Stand up and move!", [["Neck", "🙂", "Turn your head slowly left and right."], ["Shoulders", "🙆", "Roll your shoulders back five times."], ["Toe touch", "🤸", "Bend down and touch your toes."], ["Jump", "⬆️", "Jump with your arms up ten times."]]),
+    steps("Simple Yoga", "Move slowly and breathe.", [["Tree pose", "🌳", "Stand on one leg with your hands together."], ["Butterfly", "🦋", "Sit, join your feet, and flap your knees."], ["Cat stretch", "🐈", "On hands and knees, arch your back."], ["Rest", "😌", "Lie down and breathe slowly."]]),
+    steps("Skipping and Throwing", "Play outside with a grown-up.", [["Skip", "🏃", "Skip across the ground."], ["Throw", "🤾", "Throw a ball to a friend."], ["Catch", "🙌", "Catch the ball with two hands."], ["Aim", "🎯", "Throw the ball into a basket."]]),
+    quiz("Healthy Body", "Choose the right answer.", [
+      q("Which game do we play with a bat?", "Cricket", ["Swimming", "Running"], "🏏"),
+      q("How often should we exercise?", "Every day", ["Never", "Once a year"], "🗓️"),
+      q("What helps our body grow strong?", "Good food and sleep", ["Only sweets", "No sleep"], "🥗"),
+    ]),
+  ]),
+]);
